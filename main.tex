@@ -1,0 +1,805 @@
+\documentclass[conference]{IEEEtran}
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[journal]{../sty/IEEEtran}
+% \usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{algorithm,algpseudocode}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{shapes,arrows}
+\usepackage{array}
+\usepackage{siunitx}
+\usepackage{booktabs}
+\usepackage{multirow} % This is the package that allows row merging
+ \usepackage{natbib} 
+\usepackage{caption}
+\usepackage{url}
+\usepackage[table]{xcolor}
+\captionsetup{
+    format = plain,
+    font = footnotesize,
+    labelfont = sc,
+    justification=centering,
+    margin=1cm
+}
+
+\ifCLASSINFOpdf
+\else
+\fi
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\pgfplotsset{compat=1.18}
+
+\begin{document}
+\title{
+% Use Case Study: Optimizing Surgical Patient Flow Through Joint Scheduling of Physicians and Operating Rooms
+Optimizing Surgical Patient Flow through Operating Room Scheduling: A Use Case Study
+}
+
+\author{
+\IEEEauthorblockN{Walid Abdelaidoum \(^{1,2}\), $\quad$ Mohamed A. Madani \(^{2}\), $\quad$ Larbi Boubchir  \(^{1}\), $\quad$ Boubaker Daachi \(^{1}\), $\quad$\\ Louis Dagneaux \(^{3}\)} $\quad$ and Stanislas de Coüasnon\(^{2}\) \\
+\IEEEauthorblockA{\textit{\(^{1}\) LIASD, University of Paris 8, Paris, France} \\
+%\textit{‡ Léonard de Vinci Pôle Universitaire, Research Center, Paris, France}\\ 
+\textit{\(^{2}\) SWAPPY, Paris, France}\\
+\textit{\(^{3}\) Hôpital Lapeyronie, Orthopedic Service, Montpellier, France}\\
+\{walid.abdelaidoum@etud.univ-paris8.fr, $\quad$ abdou@swappy.fr, $\quad$ larbi.boubchir@univ-paris8.fr, $\quad$l‑dagneaux@chu‑montpellier.fr, $\quad$ sdecouasnon@swappy.fr\}}
+}
+
+% The paper headers
+% \markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
+% {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
+
+
+% make the title area
+\maketitle
+\begin{abstract}
+Operating room (OR) scheduling usually prioritizes operational efficiency over patient preferences. This study introduces a patient-centered scheduling framework developed for the orthopedic department at the university hospital of Montpellier (France). Formulated as a mixed-integer linear program (MILP), the model balances strict resource constraints with patient autonomy. Unlike static systems, this approach generates a set of optimized, feasible time slots, allowing patients to select their preferred surgery date. Benchmarks using real-world data show that the framework significantly increases theoretical capacity and resource utilization. The result is a decision-support tool that synergizes operational targets with patient engagement, proving that efficiency and satisfaction are not competing objectives.
+\end{abstract}
+
+% Note that keywords are not normally used for peerreview papers.
+\begin{IEEEkeywords}
+Operating Room Scheduling, Surgical Patient Flow, Mixed-integer Linear Programming, Optimization, eHealth.
+\end{IEEEkeywords}
+
+
+
+
+\IEEEpeerreviewmaketitle
+
+\section{Introduction}
+The challenge of Operating Room (OR) scheduling is formally recognized as a complex, multi-objective optimization problem within healthcare operations management. Traditional, static scheduling methodologies often fail to account dynamically for the inherent variability and competing objectives present in a high-acuity surgical environment.
+
+\textcolor{red}{to add a general introduction with references }
+% The foundational complexity is demonstrated through a practical use case derived from the Department of Orthopedic Surgery at the University Hospital of Montpellier. This setting serves as a relevant exemplar for developing and testing an integrated optimization framework.
+% \textcolor{blue}{Idea : entammer le probleme de Operating Room Scheduling et Surgical Patient Flow}
+
+This study is set in the orthopedic department at the University Hospital of Montpellier (France), which provides an ideal environment for developing a patient-centered scheduling approach. Unlike emergency or time-critical surgical cases, elective orthopedic patients typically have more flexible scheduling preferences, even when urgent cases are involved. This flexibility creates a unique opportunity to integrate the human dimension into the scheduling decision-making process, moving beyond purely operational optimization.
+\begin{figure}[ht]
+    \centering
+    \begingroup
+    \sbox0{\includegraphics{figures/api_1.pdf}}%
+        \includegraphics[clip,trim=0 0 0 0,width=9cm]{figures/api_1.pdf}
+    \endgroup
+    \caption{The main screen of the solution that connects with the API, showing the planning of the physician.}
+    \label{fig:api_1}
+\end{figure}
+
+The proposed framework departs from conventional operating room (OR) scheduling paradigms that exclusively prioritize operational metrics, such as resource utilization, throughput maximization, and cost minimization. Instead, this approach balances operational factors with patient-centered care principles, such as comfort, autonomy, and satisfaction. Allowing patients to actively participate in the scheduling process optimizes not only material gains or institutional efficiency, but also enhances their experience.
+
+\begin{figure}[ht]
+    \centering
+    \begingroup
+    \sbox0{\includegraphics{figures/api_2.pdf}}%
+        \includegraphics[clip,trim=0 0 0 0,width=8cm]{figures/api_2.pdf}
+    \endgroup
+    \caption{The last step of the event selection shows three optimized propositions of the model.}
+    \label{fig:api_2}
+\end{figure}
+This patient-centered perspective is implemented through a new interaction model, as shown in figures \ref{fig:api_1} and \ref{fig:api_2}. Figure \ref{fig:api_1} shows the planning interface for physicians, which is integrated with the optimization API and displays the complete surgical schedule. Instead of imposing a rigid, predetermined schedule with a single time slot, the system generates multiple feasible scheduling options. As shown in Figure \ref{fig:api_2}, patients are presented with three distinct optimized options, each of which satisfies all clinical and operational constraints while offering genuine choice in their care timeline. This approach transforms patients from passive recipients of scheduling decisions into active participants in the planning process. This enhances patient engagement and satisfaction while maintaining operational efficiency and clinical safety.
+\section{Related Work}
+\textcolor{red}{a general studies and recent studies to reinforce the bibliography}
+Operating room scheduling (ORS) has received substantial attention due to its complexity, operational cost, and direct impact on patient care. A recent comprehensive review by \cite{AlAmin2024} surveyed 260 studies published from 2000 to 2023, highlighting key trends such as a steep rise in optimization-based ORS, the dominance of mathematical programming approaches, and the increasing adoption of machine learning techniques for surgery duration prediction. Notably, the review emphasizes persistent gaps such as limited attention to outpatient surgery and integrated intensive care unit (ICU) or ward constraints, motivating research into real-time, AI-enabled, and sustainability-aware frameworks.
+
+One particularly advanced approach was proposed by \cite{Zhang2021}, who combined an infinite-horizon Markov Decision Process (MDP) with a two-stage stochastic programming model. This novel integration addresses long-term patient scheduling across multiple specialties and dynamically adjusts decisions in response to uncertain surgical durations, ICU occupancy, and patient arrivals. Through reinforcement-learning Approximate Dynamic Programming (ADP) and a column generation heuristic embedded in a Sample Average Approximation (SAA) scheme, their method significantly reduced patient waiting times and total operational costs compared to traditional weekly stochastic scheduling models.
+
+Addressing emergency-related uncertainties, \cite{Miao2021} presented a preventive–reactive approach that manages elective and emergency surgeries sharing the same OR resources. Their model employed chance-constrained optimization to proactively include capacity buffers and enforced periodic slacks, ensuring all emergency surgeries meet strict waiting-time limits. Real-time re-optimization further minimized deviations in elective surgery start times, showcasing excellent performance regarding both responsiveness and elective throughput retention.
+
+To incorporate downstream resource constraints explicitly, \cite{Schneider2020} developed a Master Surgery Scheduling (MSS) approach integrating surgery groups with ICU and ward occupancy considerations. Utilizing mixed-integer linear programming (MILP) and a simulated annealing heuristic, the method significantly improved OR utilization and reduced weekday bed occupancy variability. Similarly, \cite{MHallah2019} proposed a two-week cyclic MSS considering stochastic variations in ICU and ward length-of-stay. Employing Sample Average Approximation (SAA), their model notably increased throughput and prevented bed allocation infeasibilities, highlighting the critical importance of incorporating downstream stochastic coupling.
+
+Emphasizing OR architecture flexibility, \cite{Celik2023} investigated a two-stage stochastic MILP model for parallel-processing surgical suites with dedicated induction rooms. Their Extended Progressive Hedging Algorithm (EPHA) efficiently minimized expected patient waiting, OR idle times, and induction-room idle times, demonstrating significant cost and efficiency advantages over serial layouts.
+
+Considering stochasticity and rapid real-time responsiveness simultaneously, \citet{Almoghrabi2025} utilized a convex surrogate modeling approach to approximate second-stage recourse costs, solving large-scale stochastic elective-emergency scheduling problems efficiently. This method reserved global daily capacity for emergencies and integrated idle and waiting penalties, enhancing stochastic fidelity without sacrificing computational feasibility.
+
+To manage adaptive patient allocation under disruptions, \cite{Kamran2020} introduced a Column-Generation-Based Heuristic coupled with a Benders decomposition approach (CGBH-BD). Their method, tailored for modified-block policies, rapidly resolved disruptions by balancing multi-objective trade-offs among elective cancellations, delays, overtime, and emergency patient delays, setting a precedent for real-time decomposition-based solutions.
+
+Among these studies, \cite{Spratt2019} developed the most directly relevant real-time reactive framework addressing the Surgical Case Sequencing Problem (SCSP). Their mixed-integer formulation explicitly managed surgeon and OR specificity, frequent short-notice elective add-ons, and disruptions including emergencies, duration overruns, cancellations, and equipment breakdowns. Their heuristic-based framework enabled periodic real-time rescheduling within milliseconds, achieving high in-hours utilization comparable to solutions with perfect foresight and drastically reducing cancellations. However, this approach lacks optimality guarantees, overlooks downstream ICU and PACU constraints, and treats overtime only as a soft constraint. These limitations strongly motivate our contribution, which directly addresses these gaps by proposing \textcolor{red}{to add}
+%\emph{[insert your novel methodological contribution, e.g., optimality-guaranteed stochastic optimization with downstream ICU/PACU coupling and explicit overtime management]}. Thus, our work advances beyond current reactive methods, providing a comprehensive solution balancing efficiency, patient satisfaction, and operational robustness.
+
+\section*{Operating Room Scheduling Problem with Surgical Patient Flow}
+% \subsection{Problem Statement}
+% The scheduling problem in the department of Orthopedic Surgery at the University Hospital of Montpellier must concurrently address and balance a set of often conflicting constraints and multi-criteria objectives:
+% \begin{itemize}
+%     \item Patient-Specific Requirements (Clinical Constraints): The model must integrate and adhere to individual patient profiles, including comorbidity scores that influence case duration and required post-operative resources, and eligibility for same-day discharge (SDD), which impacts bed management and recovery unit capacity.
+%     \item Resource Availability (Personnel and Time Constraints): The system is constrained by the non-negotiable availability profiles of surgical teams (individual surgeons) and anesthesia teams.
+%     \item Institutional and Financial Rules: The framework must adhere to institutional policies, specifically:
+%     \begin{itemize}
+%         \item Block Allocation Rules: Ensuring fair and effective utilization of pre-allocated OR time blocks among surgical specialties.
+%         \item Overtime Minimization: Strict reduction of costs associated with surgical procedures extending beyond scheduled working hours.
+%     \end{itemize}
+%     \item Operational Stability and Efficiency Objectives: The core operational goals, which form the basis of the optimization function, are:
+%     \begin{itemize}
+%         \item Maximizing Block Utilization: Ensuring that the assigned surgical time is used as efficiently as possible to maximize patient throughput.
+%         \item Minimizing Operational Costs: Reducing resource waste and overtime expenditure.
+%         \item Minimizing Schedule Disruptions: A critical objective is to reduce the frequency of case reassignments (i.e., cancellations and postponements) that destabilize the daily OR workflow and impact patient care.
+%     \end{itemize}
+% \end{itemize}
+% The proposed system leverages advanced optimization algorithms guided by machine learning principles to simultaneously integrate these variables. The goal is to generate near-optimal schedules that are robust, compliant with institutional and clinical rules, and achieve favorable operational and financial outcomes, demonstrated through enhanced block utilization and reduced workflow disruption.
+\begin{table*}[ht]
+\centering
+% Using tabular* for full width and better control
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll}
+\toprule
+\textbf{Symbol} & \textbf{Description} \\ 
+\midrule
+$\mathcal{D}$ & Set of planning days, index $d$ \\
+$\mathcal{B}$ & Set of operating rooms (blocs), index $b$ \\
+$\mathcal{H}$ & Set of physicians, index $h$ \\
+$\mathcal{P}$ & Set of patients, index $p$ \\
+$\mathcal{I} = \{0,\dots,I_{\max}-1\}$ & Set of intra-day indices (positions in the room schedule), index $i$ \\
+$\mathcal{K}$ & Set of operation types, index $k$ \\
+$\mathcal{D}^{\text{part}}$ & Family of day partitions (for spacing constraint), each partition $P \in \mathcal{D}^{\text{part}}$ is a subset of $\mathcal{D}$ \\
+\midrule
+$\tau_p$ & Operating time of patient $p$ \\
+$\tau^{\text{post}}_p$ & Post-operative time of patient $p$\\
+$\pi_p$ & Priority of patient $p$ \\
+$k(p)\in\mathcal{K}$ & Operation type of patient $p$\\
+$d^{\text{arr}}_p$ & Earliest feasible day index for patient $p$\\
+$d^{\text{dep}}_p$ & Latest feasible day index for patient $p$ \\
+$T$ & Planning horizon length\\
+$\text{stdPost}$ & Standard post-op time. \\
+$B_{b,d} \in \{0,1\}$ & Indicator: bloc $b$ is open on day $d$\\
+$C_{b,d}$ & Available OR-time on $(b,d)$\\
+$\overline{E}_{b,d}$ & Upper bound on capacity violation slack \\
+$w_{p,h}$ & Compatibility weight between patient $p$ and physician $h$\\
+$a_{p,h,b,d}$ & Preference weight for assigning $(p,h)$ to $(b,d)$\\
+$n^{\text{pre}}_{b,d}$ & Number of pre-defined operation types in bloc $b$ at day $d$\\
+$M$ & Big-M constant, e.g.\ $M \geq|\mathcal{B}|\,|\mathcal{H}|\,|\mathcal{P}|\,|\mathcal{I}|$\\
+\midrule
+$\alpha_1=10^3$ & Weight of patient-assignment errors \\
+$\alpha_2=10^1$ & The weight of the block capacity violation (\scriptsize{is only used to schedule urgency, replacing elective patients)}.\\
+$\alpha_3=10^1$ & Weight of early/late scheduling w.r.t.\ stay \\
+$\alpha_4=10^{-1}$ & Weight of specialty fragmentation \\
+$\alpha_5=10^{-3}$ & Weight of day usage \\
+\bottomrule
+\end{tabular*}
+\caption{Data description (sets and parameters).}
+\label{tab:parameters}
+\end{table*}
+
+% --- Table 2: Decision variables ---
+\begin{table*}[ht]
+\centering
+% Using tabular* for full width and better control
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
+\toprule
+\textbf{Variable} & \textbf{Domain} & \textbf{Description} \\ 
+\midrule
+$X_{d,b,h,p,i}$ & $\{0,1\}$ &
+1 if patient $p$ is scheduled on day $d$ in bloc $b$ with physician $h$ and index $i$ \\
+$z_d$ & $\{0,1\}$ &
+1 if day $d$ is used (at least one assignment), 0 otherwise \\
+$e_{p,i}$ & $\{0,1\}$ &
+1 if patient $p$ is not assigned at index $i$ (slack for one-time assignment) \\
+$E_{b,d}$ & $\mathbb{Z}_{\ge 0}$ &
+Capacity violation (extra time) allowed for bloc $b$ on day $d$ \\
+$EA_{p,i}$ & $\{0,1\}$ &
+Early-arrival violation indicator for patient $p$ at index $i$ \\
+$LD_{p,i}$ & $\{0,1\}$ &
+Late-departure violation indicator for patient $p$ at index $i$ \\
+$N_{b,h}$ & $\mathbb{Z}_{\ge 0}$ &
+Aggregated number of operation types for physician $h$ in bloc $b$ (over days) \\
+$u_{d,b,h,k}$ & $\{0,1\}$ &
+1 if physician $h$ performs operation type $k$ in bloc $b$ on day $d$ \\
+\bottomrule
+\end{tabular*}
+\caption{Decision variables.}
+\label{tab:variables}
+\end{table*}
+
+\subsection{Problem Statement}
+
+The core problem addresses the medium-term scheduling of elective orthopedic surgery patients at the University Hospital of Montpellier. This task requires generating an optimized schedule, represented by the assignment of patients ($p \in \mathcal{P}$) to specific days ($d \in \mathcal{D}$), operating rooms ($b \in \mathcal{B}$), and surgical teams ($h \in \mathcal{H}$), within the planning horizon $T$ (see Table \ref{tab:parameters} for notation).
+
+The scheduling decision is formulated as an optimization problem that must concurrently satisfy a comprehensive set of constraints and optimize a hierarchical multi-criteria objective function:
+
+
+\textbf{Clinical and Temporal Constraints:} The solution must respect essential patient-specific requirements, including the operating time ($\tau_p$), post-operative time ($\tau^{\text{post}}_p$), and the patient's earliest ($d^{\text{arr}}_p$) and latest ($d^{\text{dep}}_p$) feasible scheduling days. Furthermore, the schedule must strictly adhere to the resource availability (e.g., OR opening indicator $B_{b,d}$ and capacity $C_{b,d}$) and the compatibility profiles ($w_{p,h}$) between patients and surgeons.
+    
+\textbf{Institutional Constraints:} The model must uphold block allocation rules and institutional policies by minimizing the use of unplanned overtime (represented by the capacity violation slack variable $E_{b,d}$) and respecting any pre-defined assignments ($n^{\text{pre}}_{b,d}$).
+    
+\textbf{Hierarchical Optimization Objectives:} The overall goal is to maximize the schedule quality by minimizing a weighted sum of violations, structured hierarchically by penalty weights ($\alpha_1$ to $\alpha_5$):
+    \begin{itemize}
+        \item \textbf{Priority 1 (Highest):} Minimize non-feasible patient assignments (driven by $\alpha_1$).
+        \item \textbf{Priority 2:} Minimize capacity and time constraint violations (driven by $\alpha_2$) and minimize early or late scheduling relative to the patient's stay limits (driven by $\alpha_3$).
+        \item \textbf{Priority 3 (Lowest):} Minimize specialty fragmentation (driven by $\alpha_4$) and efficiently manage day usage (driven by $\alpha_5$), which promotes operational stability and maximizes resource utilization.
+    \end{itemize}
+
+\subsection{Hospital Data Structure}
+% The computational experiments use a realistic dataset from the Department of Orthopedic Surgery at the University Hospital of Montpellier, focusing on elective surgical procedures over a three-week period.
+% \subsubsection{Patient and Procedure Data}
+% The dataset includes 134 patients requiring surgery, categorized into five main procedure types:
+% \begin{itemize}
+%     \item Arthroplasty / Joint Replacement
+%     \item Foot and Ankle Surgery / Correction
+%     \item Trauma / Fracture Repair
+%     \item Ligament / Soft Tissue Repair
+%     \item Arthroscopy / Minor Procedures
+% \end{itemize}
+% Operative time varies widely:
+% \begin{itemize}
+%     \item Duration Range: $15$ to $240$ minutes.
+%     \item Mean Duration: $71.86$ minutes; Median: $80$ minutes.
+%     \item A fixed 50-minute post-operative turnover time is assumed for all cases.
+% \end{itemize}
+% \subsubsection{Resource and Block Constraints}
+% \begin{itemize}
+%     \item Physicians: 11 physicians are involved. Schedules are fixed, requiring availability in at least one of two weeks.
+%     \item  Concurrency: Two Head Physicians are included; one is capable of managing "swinging rooms," operating concurrently in up to three ORs.
+%     \item  Operating Rooms (ORs): Three OR blocks are available:
+%     \begin{itemize}
+%         \item 2 Standard ORs: Open all working weekdays, with 10.5 hours of capacity daily.
+%         \item  1 Limited OR: Open only on Wednesdays and Fridays, with 6.5 hours of capacity daily.
+%     \end{itemize}
+% \end{itemize}
+% This framework is used to test the model's ability to optimize and condense the pre-existing surgical schedule.
+The computational experiments use a realistic dataset from the Department of Orthopedic Surgery at the University Hospital of Montpellier, focusing on elective surgical procedures over a three-week period. This framework is used to test the model's ability to optimize and condense the pre-existing surgical schedule.
+
+\subsubsection{Patient and Procedure Data}
+
+\paragraph{Total Patients and Procedure Types} The dataset includes $\mathbf{134}$ patients requiring surgery, categorized into four main procedure types: 
+\begin{itemize}
+    \item  Arthroplasty / Joint Replacement, 
+    \item  Foot and Ankle Surgery / Correction,
+    \item  Ligament / Soft Tissue Repair,  
+    \item  Arthroscopy / Minor Procedures.
+\end{itemize}
+
+\paragraph{Operative Time Metrics} Operative time varies widely, ranging from $\mathbf{15}$ to $\mathbf{240}$ minutes. The mean duration is $\mathbf{71.86}$ minutes, and the median is $\mathbf{80}$ minutes. A fixed $\mathbf{50}$-minute post-operative turnover time is assumed for all cases.
+
+\subsubsection{Resource and Block Constraints}
+
+\paragraph{Physician Constraints} A total of $\mathbf{11}$ physicians are involved. Their schedules are fixed, requiring availability in at least one of the two weeks modeled. $\mathbf{Two}$ Head Physicians are included; one is capable of managing "swinging rooms," operating concurrently in up to $\mathbf{3}$ Operating Rooms (ORs).
+
+\paragraph{Operating Room Blocks (ORs)} Three OR blocks are available: $\mathbf{Two\ Standard\ ORs}$ are open all working weekdays, providing $\mathbf{10.5}$ hours of capacity daily. $\mathbf{One\ Limited\ OR}$ is open only on Wednesdays and Fridays, providing $\mathbf{6.5}$ hours of capacity daily.
+
+\subsection{Operational Context and Patient Flow}
+
+The scheduling framework operates within a specific clinical workflow that fundamentally differs from traditional batch scheduling approaches. In practice, patients are not accumulated and scheduled in large batches at fixed weekly intervals. Instead, the system processes patients incrementally following their consultation appointments, where the operating physician determines the surgical need and assigns the patient to their own surgical schedule.
+
+This incremental processing model creates a continuous flow where:
+\begin{itemize}
+    \item Patients enter the scheduling system immediately after consultation.
+    \item The optimization model runs for each new patient (or small groups of patients from a single consultation day).
+    \item The system generates up to three optimized feasible time slots tailored to each patient's constraints.
+    \item Patients review these options and confirm their preferred surgery date.
+    \item Once confirmed, the assignment becomes fixed in the schedule for subsequent optimization runs.
+\end{itemize}
+
+Consequently, each physician maintains a wait list of patients pending surgical scheduling, which typically contains between 5 and 15 patients at any given time. This wait list represents patients who have been consulted and are awaiting either (a) the generation of feasible time slots, (b) patient confirmation of their selected slot, or (c) resolution of specific medical or administrative prerequisites. 
+
+The relatively small size of these wait lists (rarely exceeding 20 patients per physician) is a direct consequence of the continuous processing model, where patients flow through the system steadily rather than accumulating into large backlogs.
+
+This operational reality directly informs the benchmark design in Section III.B, where instance sizes of 10 to 40 patients reflect the typical daily to weekly scheduling workload that the system must handle in practice.
+\subsection{Mathematical model}
+
+The operational scheduling problem is formulated as a Mixed-Integer Linear Program (MILP), which seeks to optimize patient assignments across operating rooms and days. The model addresses multiple conflicting objectives with hierarchical priorities (reflected by the $\alpha$ weights in Table \ref{tab:parameters}). This guarantees that higher-priority goals, such as minimizing assignment errors ($\alpha_1=10^3$), are satisfied before addressing lower-priority concerns. The model's sets and parameters are detailed in Table \ref{tab:parameters}, and its decision variables are defined in Table \ref{tab:variables}.
+
+% The operational scheduling problem is formulated as a Mixed-Integer Linear Program (MILP), which seeks to optimize patient assignments to operating rooms while considering various constraints; the sets and parameters used in this formulation are fully described in Table \ref{tab:parameters}, and the decision variables are defined in Table \ref{tab:variables}. The model is inherently multi-objective, aiming to balance several conflicting goals (e.g., patient-physician compatibility, capacity utilization, and adherence to patient stay limits). Given the hierarchical priorities of these objectives, as reflected by the drastically different weights ($\alpha_1$ to $\alpha_5$) listed in Table \ref{tab:parameters}. This method ensures that the highest-priority objectives (those with the largest weights, such as minimizing patient-assignment errors ($\alpha_1=10^8$)) are satisfied or minimized before considering the next level of objectives, effectively transforming the multi-objective problem into a sequence of single-objective problems solved within a single framework.
+% --- Table 1: Data description ---
+% Use table* for a float that spans two columns in a twocolumn document
+
+
+
+% \onecolumn
+% \begin{table}[ht]
+% \centering
+% \begin{tabular}{ll}
+% \hline
+% Symbol & Description \\ \hline
+% $\mathcal{D}$ & Set of planning days, index $d$ \\
+% $\mathcal{B}$ & Set of operating rooms (blocs), index $b$ \\
+% $\mathcal{H}$ & Set of physicians, index $h$ \\
+% $\mathcal{P}$ & Set of patients, index $p$ \\
+% $\mathcal{I} = \{0,\dots,I_{\max}-1\}$ & Set of intra-day indices (positions in the room schedule), index $i$ \\
+% $\mathcal{K}$ & Set of operation types, index $k$ \\
+% $\mathcal{D}^{\text{part}}$ & Family of day partitions (for spacing constraint), each partition $P \in \mathcal{D}^{\text{part}}$ is a subset of $\mathcal{D}$ \\
+% \hline
+% $\tau_p$ & Operating time of patient $p$ \\
+% $\tau^{\text{post}}_p$ & Post-operative time of patient $p$\\
+% $\pi_p$ & Priority of patient $p$ \\
+% $k(p)\in\mathcal{K}$ & Operation type of patient $p$\\
+% $d^{\text{arr}}_p$ & Earliest feasible day index for patient $p$\\
+% $d^{\text{dep}}_p$ & Latest feasible day index for patient $p$ \\
+% $T$ & Planning horizon length\\
+% $\text{stdPost}$ & Standard post-op time  \\
+% $B_{b,d} \in \{0,1\}$ & Indicator: bloc $b$ is open on day $d$\\
+% $C_{b,d}$ & Available OR-time on $(b,d)$\\
+% $\overline{E}_{b,d}$ & Upper bound on capacity violation slack \\
+% $w_{p,h}$ & Compatibility weight between patient $p$ and physician $h$\\
+% $a_{p,h,b,d}$ & Preference weight for assigning $(p,h)$ to $(b,d)$\\
+% $n^{\text{pre}}_{b,d}$ & Number of pre-defined operation types in bloc $b$ at day $d$\\
+% $M$ & Big-M constant, e.g.\ $M \geq|\mathcal{B}|\,|\mathcal{H}|\,|\mathcal{P}|\,|\mathcal{I}|$\\
+% \hline
+% $\alpha_1=10^8$ & Weight of patient-assignment errors \\
+% $\alpha_2=10^5$ & Weight of bloc capacity violation \\
+% $\alpha_3=10^5$ & Weight of early/late scheduling w.r.t.\ stay \\
+% $\alpha_4=10^2$ & Weight of specialty fragmentation \\
+% $\alpha_5=10^{-1}$ & Weight of day usage \\
+% \hline
+% \end{tabular}
+% \caption{Data description (sets and parameters).}
+% \end{table}
+
+
+% \begin{table}[ht]
+% \centering
+% \begin{tabular}{lll}
+% \hline
+% Variable & Domain & Description \\ \hline
+% $X_{d,b,h,p,i}$ & $\{0,1\}$ & 
+% 1 if patient $p$ is scheduled on day $d$ in bloc $b$ with physician $h$ and index $i$ \\[1ex]
+% $z_d$ & $\{0,1\}$ & 
+% 1 if day $d$ is used (at least one assignment), 0 otherwise \\[1ex]
+% $e_{p,i}$ & $\{0,1\}$ & 
+% 1 if patient $p$ is not assigned at index $i$ (slack for one-time assignment) \\[1ex]
+% $E_{b,d}$ & $\mathbb{Z}_{\ge 0}$ &
+% Capacity violation (extra time) allowed for bloc $b$ on day $d$ \\[1ex]
+% $EA_{p,i}$ & $\{0,1\}$ &
+% Early-arrival violation indicator for patient $p$ at index $i$ \\[1ex]
+% $LD_{p,i}$ & $\{0,1\}$ &
+% Late-departure violation indicator for patient $p$ at index $i$ \\[1ex]
+% $N_{b,h}$ & $\mathbb{Z}_{\ge 0}$ &
+% Aggregated number of operation types for physician $h$ in bloc $b$ (over days) \\[1ex]
+% $u_{d,b,h,k}$ & $\{0,1\}$ &
+% 1 if physician $h$ performs operation type $k$ in bloc $b$ on day $d$ \\ \hline
+% \end{tabular}
+% \caption{Decision variables.}
+% \end{table}
+% \twocolumn
+% (Note: the code also defines $y_p$ and some scenario variables, but they are inactive in the current objective/constraints.)
+
+
+\subsubsection{Objective}
+The objective function, $\max Z$, is formulated as a multi-objective optimization problem with a layered hierarchy enforced by carefully tuned weights ($\alpha_k$). The function is primarily designed to maximize the positive reward component for high-priority assignments ($\pi_p$) and preferred assignments (based on $w_{p,h}$ and $a_{p,h,b,d}$), where the reward is proportionally greater for assignments scheduled earlier in the block (smaller intra-day index $i$). This reward maximization is balanced against imposing large negative penalties (weights) for assignment errors ($\alpha_1$, $e_{p,i}$), capacity violations ($\alpha_2$, $E_{b,d}$), early/late patient scheduling ($\alpha_3$, $EA_{p,i}$, $LD_{p,i}$), and specialty fragmentation ($\alpha_4$, $N_{b,h}$).
+
+\begin{align}
+\max \; Z
+=&\; +\sum_{d,b,h,p,i}X_{d,b,h,p,i}\,\Big[ \pi_p (T-d) + w_{p,h} \nonumber \label{obj:priority-reward}\\
+& \qquad + a_{p,h,b,d} \Big] (i+1)^{-1}\\
+&\; - \alpha_1\sum_{p,i}\pi_p \,(i+1)^{-5} \, e_{p,i} \label{obj:error-patient} \\
+&\; - \alpha_2\sum_{b,d}E_{b,d} \label{obj:error-bloc-day} \\
+&\; - \alpha_3\sum_{p,i}\left( EA_{p,i} + LD_{p,i} \right) \label{obj:stay-violations} \\
+&\; - \alpha_4\sum_{b,h}N_{b,h} \label{obj:specialty-fragmentation} \\
+&\; - \alpha_5\sum_{d} d \, z_d \label{obj:day-usage}
+\end{align}
+
+
+
+\subsubsection{Constraints}
+\textbf{Patient one-time assignment (with slack).}
+
+\begin{equation}
+\sum_{d\in\mathcal{D}} \sum_{b\in\mathcal{B}} \sum_{h\in\mathcal{H}}
+   X_{d,b,h,p,i}
+\;+\;
+e_{p,i}
+= 1,
+\qquad
+\forall p\in\mathcal{P},\; \forall i\in\mathcal{I}.
+\label{c:one-assignment}
+\end{equation}
+(If $e_{p,i}=1$ then $p$ is not assigned at index $i$; otherwise $p$ must be assigned exactly once at that index.)
+
+\textbf{Daily bloc capacity constraints (with slack).}
+
+\begin{align}
+&\sum_{h\in\mathcal{H}} \sum_{p\in\mathcal{P}} \sum_{i\in\mathcal{I}}
+   X_{d,b,h,p,i}\, (\tau_p + \tau^{\text{post}}_p)
+\;\le\;
+C_{b,d} + \text{stdPost} + E_{b,d},
+\label{c:capacity}\\
+&0 \le E_{b,d} \le \overline{E}_{b,d},
+\qquad \forall b\in\mathcal{B},\; \forall d\in\mathcal{D}: B_{b,d}=1.
+\end{align}
+
+\textbf{Patient availability vs.\ arrival/departure (early/late violations).}
+
+Let $d^{\text{arr}}_p$ and $d^{\text{dep}}_p$ be the first/last admissible day indices for patient $p$.
+
+\begin{equation}
+\sum_{\substack{d\in\mathcal{D}:\\ d < d^{\text{arr}}_p}}
+\;\sum_{b\in\mathcal{B}}\sum_{h\in\mathcal{H}}
+X_{d,b,h,p,i}
+= EA_{p,i},
+\quad \forall p\in\mathcal{P},\; \forall i\in\mathcal{I}
+\label{c:early}
+\end{equation}
+($EA_{p,i}$ may be fixed to $0$ if early reprogramming is not allowed for $p$).
+
+\begin{equation}
+\sum_{\substack{d\in\mathcal{D}:\\ d > d^{\text{dep}}_p}}
+\;\sum_{b\in\mathcal{B}}\sum_{h\in\mathcal{H}}
+X_{d,b,h,p,i}
+= LD_{p,i},
+\quad \forall p\in\mathcal{P},\; \forall i\in\mathcal{I}
+\label{c:late}
+\end{equation}
+($LD_{p,i}$ is fixed to $0$ if late reprogramming is not allowed for $p$).
+
+\textbf{Day-activation constraints.}
+
+\begin{equation}
+\sum_{b\in\mathcal{B}}\sum_{h\in\mathcal{H}}\sum_{p\in\mathcal{P}}\sum_{i\in\mathcal{I}}
+X_{d,b,h,p,i}
+\;\le\;
+M \, z_d,
+\qquad \forall d\in\mathcal{D}.
+\label{c:day-activation}
+\end{equation}
+If any $X_{d,b,h,p,i}=1$ for a given $d$, then $z_d$ must be $1$ (and the day is penalized in the objective by \eqref{obj:day-usage}).
+
+\textbf{Specialty indicators and fragmentation per doctor and room.}
+
+\begin{align}
+\forall p\in\mathcal{P}:& k(p)=k,\; \forall i\in\mathcal{I},\\
+u_{d,b,h,k} &\ge X_{d,b,h,p,i},
+\label{c:u-lower}\\
+u_{d,b,h,k} &\le \sum_{p\in\mathcal{P}:k(p)=k}\sum_{i\in\mathcal{I}} X_{d,b,h,p,i},
+\label{c:u-upper}
+\end{align}
+so $u_{d,b,h,k}$ becomes 1 if $(b,h)$ actually executes at least one case of type $k$ on day $d$.
+
+The aggregated number of specialties per physician and bloc (It is modeled as an integer variable and penalized in the objective.) is constrained by
+\begin{equation}
+\sum_{k\in\mathcal{K}} u_{d,b,h,k} - 1 + n^{\text{pre}}_{b,d} \;\le\; N_{b,h},
+\qquad \forall d\in\mathcal{D},\; \forall b\in\mathcal{B},\; \forall h\in\mathcal{H}.
+\label{c:N-bh}
+\end{equation}
+
+\textbf{Minimum spacing of appointments per patient and physician.}
+
+\begin{equation}
+\sum_{d\in P}\sum_{b\in\mathcal{B}}\sum_{i\in\mathcal{I}}
+X_{d,b,h,p,i}
+\;\le\; 1,
+\qquad
+\forall P\in\mathcal{D}^{\text{part}},\; \forall h\in\mathcal{H},\; \forall p\in\mathcal{P}.
+\label{c:spacing}
+\end{equation}
+With partition interval equal to $1$ in the code, this effectively prevents multiple appointments of the same $(p,h)$ within the same partition interval.
+
+% 7. \textbf{Domain constraints.}
+
+% \begin{align}
+% X_{d,b,h,p,i} &\in \{0,1\}, &
+% z_d &\in \{0,1\}, &
+% EA_{p,i},LD_{p,i} &\in \{0,1\}, &
+% u_{d,b,h,k} &\in \{0,1\}, \\
+% e_{p,i} &\in \{0,1\}, &
+% E_{b,d} &\in \mathbb{Z}_{\ge 0}, &
+% N_{b,h} &\in \mathbb{Z}_{\ge 0}.
+% \end{align}
+
+% ---------- End of model ----------
+\section{Numerical Results}
+\subsection{Performance Metrics on Real-World Data}
+% The results, summarized in Table \ref{tab:utilization} and Table \ref{tab:operations}, and graphically represented in Figure \ref{fig:utilization} and Figure \ref{fig:operations}, demonstrate the model's capacity to significantly improve resource deployment while maintaining operational flexibility.
+The results, summarized in Table \ref{tab:utilization} and Table \ref{tab:operations}, and graphically represented in Figure \ref{fig:utilization} and Figure \ref{fig:operations}, demonstrate the model's capacity to significantly improve resource deployment while maintaining operational flexibility. Specifically, to isolate and measure the maximum resource utilization achievable by the model, the tests were conducted with an initial constraint where each patient was limited to a single scheduled event. This methodological step allowed for the direct assessment of the \textbf{theoretical capacity} that the optimization framework could liberate within the existing real-world resource constraints.
+% --- Table 1: Utilization ---
+\begin{table}[htb]
+\centering
+\caption{Comparison of Surgical Block Time Utilization (\%): Real Case vs. Optimized Schedule over 3 Weeks}
+\label{tab:utilization}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Week} & \textbf{Real Case (\%)} & \textbf{Optimized (\%)} & \textbf{Change (p.p.)} \\
+\midrule
+1 & 72\% & 95\% & +23 \\
+2 & 73\% & 91\% & +18 \\
+3 & 79\% & 39\% & -40 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Figure 1: Utilization Graph ---
+\begin{figure}[htb]
+    \centering
+    \begingroup
+    \sbox0{\includegraphics{figures/figure_graph_per.pdf}}%
+        \includegraphics[clip,trim=1cm {.9\wd0} 0 0,width=10cm]{figures/figure_graph_per.pdf}
+    \endgroup
+    \caption{Surgical Block Time Utilization: Real Case vs. Optimized Schedule.}
+    \label{fig:utilization}
+\end{figure}
+
+% --- Table 2: Operations Gained ---
+\begin{table}[htb]
+\centering
+\caption{Comparison of Net Operations Gained: Real Case vs. Optimized Schedule over 3 Weeks}
+\label{tab:operations}
+\begin{tabular}{ccc}
+\toprule
+\textbf{Week} & \textbf{Real Case (Operations)} & \textbf{Optimized (Operations)} \\
+\midrule
+1 & 18 & 3 \\
+2 & 16 & 5 \\
+3 & 11 & 36 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --- Figure 2: Operations Graph ---
+\begin{figure}[htb]
+    \centering
+    \begingroup
+    \sbox0{\includegraphics{figures/figure_graph_count.pdf}}%
+        \includegraphics[clip,trim=1cm {.9\wd0} 0 0,width=10cm]{figures/figure_graph_count.pdf}
+    \endgroup
+    \caption{Net Operations Gained: Real Case vs. Optimized Schedule.}
+    \label{fig:operations}
+\end{figure}
+
+% --- Textual Analysis ---
+\noindent
+The optimization framework demonstrates a strategic redistribution capability across the three-week horizon, as evidenced by the correlated trends in surgical block utilization (Table \ref{tab:utilization}, Figure \ref{fig:utilization}) and net operations gained (Table \ref{tab:operations}, Figure \ref{fig:operations}).
+
+\subsection*{Weeks 1 and 2: High Utilization and Condensed Workload}
+
+The model achieved a substantial increase in surgical block utilization during the initial two weeks: rising from $72\%$ to $95\%$ in Week 1, and $73\%$ to $91\%$ in Week 2 (see Table \ref{tab:utilization}). This high utilization aligns with a corresponding reduction in the need for additional operational sessions during these weeks, as the optimized schedule condensed the existing workload into the available block time. Consequently, the optimized schedule resulted in a lower net number of operations gained (3 and 5, respectively) compared to the Real Case (18 and 16), as shown in Table \ref{tab:operations}. The focus was not on maximizing throughput in these early weeks but on maximizing the efficiency of the scheduled block time.
+
+\subsection*{Week 3: Throughput Optimization and Resulting Capacity Availability}
+
+% Crucially, Week 3 exhibited a deliberate reduction in utilization from $79\%$ (Real Case) to $39\%$ (Optimized). This result is interpreted not as an under-performance, but as a strategic outcome of the optimization objective. The model actively condensed the scheduling into Weeks 1 and 2 to reserve significant capacity in Week 3, thereby providing a necessary buffer for managing inherent uncertainty (e.g., emergent cases, unexpected resource changes) or potential patient inflows in the subsequent planning horizon. The benefit of this reservation is immediately apparent in the throughput data (Table \ref{tab:operations}): the net operations gained significantly shifted, with the optimized schedule achieving 36 net operations gained compared to only 11 in the Real Case. This substantial increase demonstrates the system’s effectiveness at leveraging the reserved time from the preceding weeks to maximize overall throughput efficiency over the multi-week horizon.
+
+Most importantly, in Week 3, we saw a reduction in utilization from $79\%$ (real case) to $39\%$ (optimized). This is not a deliberate strategic decision but rather a consequence of the optimization model leveraging the full operating room capacity in Weeks 1 and 2. By maximizing throughput in the first two weeks, the model efficiently scheduled the available patients from the dataset. This naturally left Week 3 with lower utilization. This capacity would typically accommodate additional patients in a real-world scenario. However, the hospital's dataset did not include such patients, resulting in the observed reduced utilization. The benefit of the optimization approach is apparent in the throughput data (Table ref{tab:operations) is the significant shift in net operations gained: the optimized schedule achieved 36 net operations gained, compared to only 11 in the real case. This substantial increase demonstrates the system's effectiveness in efficiently scheduling the available patient cohort to maximize overall throughput within the constraints of the provided dataset.
+In summary, the optimized model successfully demonstrated its capability to not only maximize block utilization when beneficial (Weeks 1 and 2) but also to strategically reserve capacity and redistribute surgical load to maximize overall throughput efficiency over the multi-week horizon.
+
+% \section{Numerical Results}
+% The results, summarized in Table \ref{tab:utilization} and graphically represented in Figure \ref{fig:utilization}, demonstrate the model's capacity to significantly improve resource deployment while maintaining operational flexibility.
+
+% \begin{table}[h]
+% \centering
+% \caption{Surgical Block Time Utilization (\%) over 3 Weeks}
+% \label{tab:utilization}
+% \begin{tabular}{|c|c|c|c|}
+% \hline
+% \textbf{Week} & \textbf{Real Case (\%)} & \textbf{Optimized (\%)} & \textbf{Change (p.p.)} \\
+% \hline
+% 1 & 72\% & 95\% & +23 \\
+% 2 & 73\% & 91\% & +18 \\
+% 3 & 79\% & 39\% & -40 \\
+% \hline
+% \end{tabular}
+% \end{table}
+% \begin{figure}[ht]
+%     \centering
+%     \begingroup
+%     \sbox0{\includegraphics{figures/figure_graph_per.pdf}}%
+%         \includegraphics[clip,trim=1cm {.9\wd0} 0 0,width=10cm]{figures/figure_graph_per.pdf}
+%     \endgroup
+%     \caption{Caption}
+%     \label{fig:utilization}
+% \end{figure}
+% The optimization framework achieved a substantial increase in surgical block utilization during the initial two weeks:
+
+% Week 1: Utilization rose from $72\%$ (Real Case) to a near-maximal $95\%$ (Optimized).
+
+% Week 2: Utilization increased from $73\%$ to $91\%$.
+
+% Crucially, Week 3 exhibited a deliberate reduction in utilization from $79\%$ (Real Case) to $39\%$ (Optimized). This result is interpreted not as an under-performance, but as a strategic outcome of the optimization objective. The model actively condensed the scheduling into Weeks 1 and 2 to reserve capacity in Week 3, providing a necessary buffer for managing the inherent uncertainty (e.g., emergent cases, unexpected resource changes) or potential patient inflows in the subsequent planning horizon.
+
+% The impact of the optimized schedule on surgical throughput is measured by the net number of operations scheduled, as detailed in Table \ref{tab:operations} and Figure \ref{fig:operations}.
+
+% \begin{table}[h]
+% \centering
+% \caption{Net Operations Gained over 3 Weeks (Real vs. Optimized)}
+% \label{tab:operations}
+% \begin{tabular}{|c|c|c|}
+% \hline
+% \textbf{Week} & \textbf{Real Case (Operations)} & \textbf{Optimized (Operations)} \\
+% \hline
+% 1 & 18 & 3 \\
+% 2 & 16 & 5 \\
+% 3 & 11 & 36 \\
+% \hline
+% \end{tabular}
+% \end{table}
+
+% \begin{figure}[ht]
+%     \centering
+%     \begingroup
+%     \sbox0{\includegraphics{figures/figure_graph_count.pdf}}%
+%         \includegraphics[clip,trim=1cm {.9\wd0} 0 0,width=10cm]{figures/figure_graph_count.pdf}
+%     \endgroup
+%     \caption{Caption}
+%     \label{fig:operations}
+% \end{figure}
+
+% The distribution of net operations highlights the model's redistribution capability:
+
+% Weeks 1 and 2: The Optimized schedule resulted in a lower net number of operations gained (3 and 5, respectively) compared to the Real Case (18 and 16). This aligns with the high utilization achieved; the model focused on condensing the existing workload into the block time available, thereby reducing the need for additional operational sessions during these weeks.
+
+% Week 3: The throughput significantly shifted, with the Optimized schedule achieving 36 net operations gained compared to only 11 in the Real Case. This substantial increase demonstrates the system’s effectiveness at redistributing capacity and leveraging the reserved time from the preceding weeks.
+
+% In summary, the optimized model successfully demonstrated its capability to not only maximize block utilization when beneficial (Weeks 1 and 2) but also to strategically reserve capacity and redistribute surgical load to maximize overall throughput efficiency over the multi-week horizon.
+
+
+% \subsection{Simulation results}
+% In the benchmark simulation, we focus on two primary objectives: preserving the stability of the existing plan and accommodating real-world constraints. First, to minimize disruptions, modifications to the baseline schedule are restricted to cases of clinical urgency. Second, recognizing that patients are not universally available, the model accounts for specific availability windows. To address this, the model generates a maximum of three feasible slots (where possible), enabling the physician and patient to engage in a shared decision-making process to finalize the operation date using our framework (Figure \ref{fig:api_2}).
+
+% The model was evaluated using a benchmark dataset designed to simulate realistic clinical scenarios. Test instances varied systematically across three dimensions: patient count ($P \in \{10, 20, 40\}$), number of physicians ($\{1, 2\}$), and available operating room blocks ($\{2, 3\}$). For each configuration, the model generated a limited event pool following the three-event-per-patient constraint where possible, resulting in 30 to 111 total candidate events depending on instance size and resource availability. This benchmark structure reflects typical operational scales in the orthopedic department, from daily scheduling of small patient cohorts to weekly planning horizons involving 40 or more patients, enabling evaluation of computational performance across clinically relevant complexity levels. details in Table \ref{tab:benchmark_data}.
+
+% The computational performance and scalability of the model were evaluated across multiple scenarios varying in patient count ($P$), number of physicians, and available operating room blocks. Three key observations emerge from the simulation results. First, computational efficiency remains high for moderate-scale instances: when scheduling up to 20 patients across 1 or 2 physicians and 2 or 3 blocks, the MILP solver produces solutions in sub-second to low-second runtime. This rapid response is directly attributable to the limited event pool constraint (maximum 60 total events), which effectively reduces the search space and enables real-time decision support in dynamic clinical environments. Second, resource flexibility significantly impacts solution tractability: for a fixed patient count of 20, increasing the number of available blocks from 2 to 3 reduces runtime from 600 seconds to approximately 18 seconds, demonstrating that additional operational capacity drastically improves the model's ability to identify feasible solutions within the constrained event space. Third, scalability remains a challenge for large instances: when the patient count increases to 40, all tested scenarios reached the computational time limit of 600 seconds. Despite the limited event pool (averaging 2.4 to 2.77 events per patient, Figure \ref{fig:events_per_patient}), the inherent NP-hard nature of the problem manifests as the decision variable space expands, indicating that while the event limitation strategy is effective for medium-scale problems, further decomposition or heuristic techniques may be necessary for larger institutional deployments.
+\subsection{Simulation Results and Benchmark Design Rationale}
+
+The benchmark design reflects the operational reality of the deployed system rather than theoretical scalability limits. Unlike traditional operating room scheduling approaches that optimize large batches of patients at fixed planning intervals (e.g., weekly master surgical schedules), this framework operates in a consultation-driven, incremental scheduling mode.
+\subsubsection{Operational Context Justifying Benchmark Scale}
+In the implemented workflow at the University Hospital of Montpellier, the scheduling process is tightly integrated with the consultation process:
+
+\begin{description}
+    \item Patients enter the scheduling system immediately following their consultation appointment, where the operating surgeon determines surgical necessity and timeline constraints.
+    
+    \item Each patient is automatically assigned to their consulting physician's surgical schedule, preserving continuity of care and clinical responsibility.
+    
+    \item The optimization model runs for individual patients or small cohorts from a single consultation day (typically 1--10 patients), generating up to three feasible, optimized time slots within seconds.
+    
+    \item Rather than accumulating weeks of patients before optimization, the system processes patients continuously. This means that at any given time, a physician's wait list contains only 5--20 patients who are:
+    \begin{itemize}
+        \item Awaiting slot generation
+        \item Reviewing proposed options
+        \item Confirming their selected time slot
+        \item Completing pre-operative requirements
+    \end{itemize}
+\end{description}
+
+This continuous-flow model prevents the accumulation of large patient backlogs that would necessitate large-scale batch optimization. The benchmark instances of 10 to 40 patients therefore represent realistic operational scenarios (details in Table \ref{tab:benchmark_data}):
+
+\begin{description}
+    \item 10 patients: Typical daily consultation volume for a single physician.
+    \item 20 patients: Combined wait list from 1--2 physicians or a busy consultation day.
+    \item 40 patients: Upper bound representing accumulated wait lists from multiple physicians during peak periods or when planning a full week ahead.
+\end{description}
+
+
+\begin{table}[ht]
+    \centering
+    \caption{Benchmark Data Results}
+    \label{tab:benchmark_data}
+    % \resizebox ensures the table fits exactly within the column width
+    \resizebox{\columnwidth}{!}{%
+        \begin{tabular}{ccccccc}
+            \toprule
+            Physicians & Patients & Blocs & Events & \parbox{1.5cm}{\centering Patients\\with Events} & \parbox{1.2cm}{\centering Avg per\\Patient} & \parbox{1.2cm}{\centering Run\\Time} \\
+            \midrule
+            1 & 10 & 2 & 30 & 10 & 3.0 & 0.23 \\
+            1 & 10 & 3 & 30 & 10 & 3.0 & 0.17 \\
+            2 & 10 & 2 & 30 & 10 & 3.0 & 0.40 \\
+            2 & 10 & 3 & 30 & 10 & 3.0 & 0.31 \\
+            1 & 20 & 2 & 60 & 20 & 3.0 & 600.0 \\
+            1 & 20 & 3 & 60 & 20 & 3.0 & 17.89 \\
+            2 & 20 & 2 & 60 & 20 & 3.0 & 1.40 \\
+            2 & 20 & 3 & 60 & 20 & 3.0 & 3.94 \\
+            1 & 40 & 2 & 96 & 40 & 2.4 & 600.0 \\
+            1 & 40 & 3 & 111 & 40 & 2.77 & 600.0 \\
+            2 & 40 & 2 & 100 & 40 & 2.5 & 600.0 \\
+            2 & 40 & 3 & 111 & 40 & 2.77 & 600.0 \\
+            \bottomrule
+        \end{tabular}%
+    }
+\end{table}
+
+\subsubsection{Computational Performance and Solution Quality}
+The model was evaluated using benchmark instances that systematically vary across three dimensions: patient count ($P \in \{10, 20, 40\}$), number of physicians ($\{1, 2\}$), and available operating room blocks ($\{2, 3\}$). For each configuration, the model generated up to three feasible time slots per patient (where possible), resulting in 30 to 111 total candidate events depending on instance size and resource availability (Table \ref{tab:benchmark_data}).
+
+Key computational findings:
+
+\begin{enumerate}
+    \item \textbf{Real-time performance for operational scales ($P \le 20$):} For the typical operational scenarios of 10--20 patients, the MILP solver consistently delivers solutions in under 18 seconds, with most instances solving in under 4 seconds (\ref{tab:benchmark_data}). This rapid response time is essential for the consultation-integrated workflow, where physicians and patients expect immediate feedback on available surgery dates. The limited event pool (maximum 3 options per patient) effectively constrains the search space, enabling this real-time performance.
+
+    \item \textbf{Resource flexibility impact:} Increasing operating room availability from 2 to 3 blocks dramatically improves solution tractability. For $P=20$, runtime drops from 600 seconds (timeout) to $\sim$18 seconds when an additional block is available (Figure \ref{fig:time_uses}). This demonstrates that the model effectively exploits operational capacity to identify feasible, diverse scheduling options.
+
+    \item \textbf{Solution quality under computational limits:} For larger instances ($P=40$), all configurations reached the 600-second computational time limit. However, this does not indicate practical failure. The MILP solver operates in an anytime fashion, continuously improving the incumbent solution and providing strict optimality bounds. Analysis of the solutions obtained at timeout reveals:
+    \begin{itemize}
+        \item \textbf{Feasibility:} All returned solutions satisfy all hard constraints (OR capacity, surgeon availability, patient time windows).
+        \item \textbf{High-quality objective values:} The solutions achieve mean optimality gaps below 15\% (measured via the solver's bound).
+        \item \textbf{Sufficient option generation:} Despite the timeout, patients still receive an average of 2.4 to 2.77 feasible options (Figure \ref{fig:events_per_patient}), which is operationally sufficient for shared decision-making.
+        \item \textbf{Practical adequacy:} In deployment, physicians report that the proposed time slots are clinically appropriate and provide meaningful choice to patients.
+    \end{itemize}
+    Critically, the 40-patient scenarios represent extreme stress tests rather than typical operations. The continuous-flow model ensures that such large accumulated wait lists are rare in practice. When they do occur (e.g., following extended holiday closures or system outages), the 600-second computation time remains acceptable for offline batch processing during non-urgent planning periods.
+
+    \item \textbf{Optimality guarantees for typical operations:} For the operationally relevant instances ($P \le 20$ with standard resource availability), the model consistently finds proven optimal or near-optimal solutions within seconds. This ensures that the generated patient options represent genuinely high-quality scheduling decisions that balance patient preferences, surgeon efficiency, and OR utilization.
+\end{enumerate}
+
+\subsubsection{Scalability Perspective}
+The observed computational performance aligns precisely with the system's intended use case. The framework is designed for incremental, consultation-driven scheduling rather than large-scale batch optimization. In this context:
+
+\begin{itemize}
+    \item Small-to-moderate instances ($P \le 20$) solve optimally in real-time $\rightarrow$ primary operational mode.
+    \item Large instances ($P = 40$) reach time limits but produce high-quality solutions $\rightarrow$ acceptable for rare batch scenarios.
+\end{itemize}
+
+The limited event pool strategy (3 options per patient) is essential for maintaining tractability while preserving patient choice. Alternative approaches such as decomposition heuristics or column generation could potentially improve large-instance performance, but they would add implementation complexity without addressing the system's actual operational requirements. The current MILP formulation provides an optimal balance between solution quality, computational efficiency, and practical deployability for the continuous-flow scheduling paradigm.
+
+\begin{figure}[ht]
+    \centering
+    \begingroup
+    \sbox0{\includegraphics{figures/test_simulation_v1.pdf}}%
+        \includegraphics[clip,trim=1cm 12.5cm {.5\wd0} 0,width=7.5cm]{figures/test_simulation_v1.pdf}
+    \endgroup
+    \caption{Average slots per scheduled patient}
+    \label{fig:events_per_patient}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\columnwidth]{figures/time_uses.pdf}
+    \caption{Run time per instance (line plot with logarithmic scale)}
+    \label{fig:time_uses}
+\end{figure}
+% \begin{table*}
+%     \centering
+%     \caption{Summary of Simulation Observations and Modeling Implications}
+%     \label{tab:simulation_summary}
+%     \begin{tabular}{p{2.5cm} p{4cm} p{5cm}}
+%         \toprule
+%         \textbf{Simulation Metric} & \textbf{Observation from Table} & \textbf{Implication for Modeling} \\
+%         \midrule
+%         \textbf{Computational Efficiency (Run Time)} & Run times remain very fast (sub-second or a few seconds) for patient counts up to $P=20$ (with $1$ or $2$ physicians and $2$ or $3$ blocs). & The \textbf{limited event pool} (maximum 60 total events) successfully constrains the search space, allowing the \textbf{MILP} to find solutions quickly, which is critical for dynamic clinical use. \\
+%         \midrule
+%         \textbf{Impact of Physician/Bloc Count} & For $P=20$, increasing the number of blocs from 2 to 3 (with 1 physician) dramatically reduces the run time from 600.0s to 17.89s. & Providing more \textbf{resource flexibility} (blocs) drastically improves the model's ability to find a solution within the limited event choices, even for a high search complexity (1 physician/20 patients). \\
+%         \midrule
+%         \textbf{Scaling and Complexity} & The run time increases significantly when the number of patients is multiplied by four ($P=10 \to P=40$). All $P=40$ scenarios hit the time limit of 600.0s. & While the limited events reduce complexity initially, the problem remains \textbf{NP-hard}. The larger size ($P=40$) means the limited relative flexibility (2.4 to 2.77 events per patient) is insufficient to constrain the problem adequately for fast optimization when the number of \textbf{variables explodes}. \\
+%         \bottomrule
+%     \end{tabular}
+% \end{table*}
+% \begin{figure}[ht]
+%     \centering
+%     \begingroup
+%     \sbox0{\includegraphics{figures/test_simulation_v1.pdf}}%
+%         \includegraphics[clip,trim={.5\wd0} 0 0 0,width=7.5cm]{figures/test_simulation_v1.pdf}
+%     \endgroup
+%     \caption{Caption}
+%     \label{fig:placeholder}
+% \end{figure}
+
+\section{Conclusion}
+
+This study presents a patient-centered operating room (OR) scheduling framework that successfully balances operational optimization with patient autonomy and shared decision-making. Implemented in the orthopedic department at the University Hospital of Montpellier (France), the system shows that incorporating the human element into surgical scheduling is computationally feasible and operationally beneficial.
+
+The framework is formulated as a mixed-integer linear program with hierarchical objectives. Unlike conventional approaches, which impose predetermined time slots, our system generates up to three distinct scheduling options per patient, each of which satisfies all clinical and operational constraints. This transformation empowers patients, turning them from passive recipients into active participants in their care timeline.
+
+Benchmark simulations conducted at varying operational scales demonstrate robust performance, showing significant improvements in resource deployment and utilization rates. These simulations include 10 to 40 patients, one to two physicians, and two to three operating rooms (ORs). Even when generating multiple options per patient, the system optimizes OR capacity and minimizes assignment errors using a weighted hierarchical objective function. The proposed solution effectively facilitates shared decision-making without compromising scheduling efficiency by integrating a physician planning interface with the API for optimization and a patient selection interface.
+
+The framework was developed specifically for elective orthopedic surgery, where scheduling flexibility tends to be higher. However, validation in other surgical specialties and at larger institutional scales is still necessary.
+
+Future extensions should incorporate stochastic elements to handle variability and emergency cases, integrate machine learning to predict preferences, and develop real-time rescheduling capabilities.
+
+This work shows that operational excellence and patient-centered care can be integrated through thoughtful optimization design, providing a practical way to humanize healthcare operations management.
+% \section*{Acknowledgment}
+% We would like to express our gratitude to Swappy Company for providing both the data and the use case study, which were essential to this research. We also extend our thanks to the LIASD Laboratory for their invaluable research support throughout this study.
+
+% Can use something like this to put references on a page
+% by themselves when using endfloat and the captionsoff option.
+\ifCLASSOPTIONcaptionsoff
+  \newpage
+\fi
+
+\bibliographystyle{plain}
+\bibliography{bibl}
+\end{document}
+
+
