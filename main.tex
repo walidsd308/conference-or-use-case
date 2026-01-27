@@ -1,4 +1,4 @@
-\documentclass[conference]{IEEEtran}
+\documentclass[10pt,conference]{IEEEtran}
 \usepackage{amsmath}
 \usepackage{algorithm,algpseudocode}
 \usepackage{amsmath}
@@ -39,7 +39,9 @@ Optimizing Surgical Patient Flow through Operating Room Scheduling: A Use Case S
 \IEEEauthorblockA{\textit{\(^{1}\) LIASD, University of Paris 8, Paris, France} \\
 \textit{\(^{2}\) SWAPPY, Paris, France}\\
 \textit{\(^{3}\) Hôpital Lapeyronie, Orthopedic Service, Montpellier, France}\\
-\{walid.abdelaidoum@etud.univ-paris8.fr, $\quad$ abdou@swappy.fr, $\quad$ larbi.boubchir@univ-paris8.fr, $\quad$l‑dagneaux@chu‑montpellier.fr, $\quad$ sdecouasnon@swappy.fr\}}
+\{walid.abdelaidoum@etud.univ-paris8.fr, $\quad$ abdou@swappy.fr, $\quad$ larbi.boubchir@univ-paris8.fr,\\
+l-dagneaux@chu-montpellier.fr, $\quad$ sdecouasnon@swappy.fr\}}
+
 }
 \maketitle
 \begin{abstract}
@@ -58,9 +60,9 @@ Operating Room Scheduling, Surgical Patient Flow, Mixed-integer Linear Programmi
 \section{Introduction}
 The challenge of Operating Room (OR) scheduling is formally recognized as a complex, multi-objective optimization problem within healthcare operations management. Traditional, static scheduling methodologies often fail to account dynamically for the inherent variability and competing objectives present in a high-acuity surgical environment.
 
-\textcolor{red}{to add a general introduction with references }
+Operating room scheduling directly impacts healthcare delivery, influencing operational costs, resource utilization, and crucially, patient experience and clinical outcomes. As documented in recent reviews, OR scheduling has become increasingly important due to rising healthcare expenditures, limited surgical resources, and growing patient expectations for timely access to care \cite{AlAmin2024}. Most conventional approaches prioritize operational metrics maximizing OR utilization, minimizing overtime, and reducing patient waiting times through deterministic or stochastic optimization models. However, these methodologies typically impose predetermined schedules without incorporating patient preferences or autonomy, treating patients as passive participants rather than stakeholders in the scheduling process. This operational-centric perspective, while efficient in resource management, often overlooks the human dimension of surgical care, including patient anxiety, schedule disruption costs, and the therapeutic value of patient involvement in treatment planning.
 
-This study is set in the orthopedic department at the University Hospital of Montpellier (France), which provides an ideal environment for developing a patient-centered scheduling approach. Unlike emergency or time-critical surgical cases, elective orthopedic patients typically have more flexible scheduling preferences, even when urgent cases are involved. This flexibility creates a unique opportunity to integrate the human dimension into the scheduling decision-making process, moving beyond purely operational optimization.
+This study is set in the orthopedic department at the University Hospital of Montpellier (France), which provides an ideal environment for developing a patient-centered scheduling approach. Unlike emergency or time critical surgical cases, elective orthopedic patients typically have more flexible scheduling preferences, even when urgent cases are involved. This flexibility creates a unique opportunity to integrate the human dimension into the scheduling decision-making process, moving beyond purely operational optimization.
 \begin{figure}[ht]
     \centering
     \begingroup
@@ -84,12 +86,18 @@ The proposed framework departs from conventional operating room (OR) scheduling 
 \end{figure}
 This patient-centered perspective is implemented through a new interaction model, as shown in figures \ref{fig:api_1} and \ref{fig:api_2}. Figure \ref{fig:api_1} shows the planning interface for physicians, which is integrated with the optimization API and displays the complete surgical schedule. Instead of imposing a rigid, predetermined schedule with a single time slot, the system generates multiple feasible scheduling options. As shown in Figure \ref{fig:api_2}, patients are presented with three distinct optimized options, each of which satisfies all clinical and operational constraints while offering genuine choice in their care timeline. This approach transforms patients from passive recipients of scheduling decisions into active participants in the planning process. This enhances patient engagement and satisfaction while maintaining operational efficiency and clinical safety.
 \section{Related Work}
-\textcolor{red}{a general studies and recent studies to reinforce the bibliography}
-Operating room scheduling (ORS) has received substantial attention due to its complexity, operational cost, and direct impact on patient care. A recent comprehensive review by \cite{AlAmin2024} surveyed 260 studies published from 2000 to 2023, highlighting key trends such as a steep rise in optimization-based ORS, the dominance of mathematical programming approaches, and the increasing adoption of machine learning techniques for surgery duration prediction. Notably, the review emphasizes persistent gaps such as limited attention to outpatient surgery and integrated intensive care unit (ICU) or ward constraints, motivating research into real-time, AI-enabled, and sustainability-aware frameworks.
+
+Operating room scheduling (ORS) has received substantial attention due to its complexity, operational cost, and direct impact on patient care. A recent comprehensive review by \cite{AlAmin2024} surveyed 260 studies published from 2000 to 2023, highlighting key trends such as a steep rise in optimization-based ORS, the dominance of mathematical programming approaches, and the increasing adoption of machine learning techniques for surgery duration prediction. The body of OR scheduling literature can be broadly classified into two strategic levels: \textit{tactical}, addressing medium-term master surgical schedules (weekly or monthly block allocation to specialties), and \textit{operational}, addressing short-term patient-to-slot assignments within fixed block structures. Within these levels, researchers employ deterministic models for predictable surgical workflows, stochastic models for uncertainty in durations and patient arrivals, and increasingly, machine learning approaches for data-driven decision support.
+
+Recent advances in artificial intelligence have significantly enhanced OR scheduling capabilities. \cite{Zhao2025} developed a novel hybrid framework integrating multi-level reinforcement learning with column generation techniques, achieving 15.8\% reduction in patient waiting time using real-world hospital data. Similarly, \cite{Eshghali2024} proposed a machine learning-based framework employing random forest models to predict emergency surgery durations and arrival times, enabling proactive capacity reservation across multiple hospital units. The predict-then-optimize paradigm has gained traction, as demonstrated by \cite{Lex2025} for elective orthopedic surgery, where ML-based duration prediction tightly integrated with optimization models significantly improved OR utilization. Moving beyond static daily schedules, \cite{ElBalka2025} introduced Dynamic Operation Room Scheduling (DORS), an explainable AI-driven intraday system that dynamically adjusts schedules in real-time, reducing average waiting times by up to 560 minutes.
+
+Notably, the review emphasizes persistent gaps such as limited attention to outpatient surgery and integrated intensive care unit (ICU) or ward constraints, motivating research into real-time, AI-enabled, and sustainability-aware frameworks. Beyond operational optimization, a critical and understudied gap persists: the absence of patient-centered scheduling frameworks that balance institutional efficiency with patient autonomy and shared decision-making. Existing literature predominantly treats patients as resources to be optimized rather than stakeholders whose preferences and comfort contribute meaningfully to surgical outcomes. This gap motivates the integration of patient choice into operational scheduling models a shift toward human-centered healthcare operations.
 
 One particularly advanced approach was proposed by \cite{Zhang2021}, who combined an infinite-horizon Markov Decision Process (MDP) with a two-stage stochastic programming model. This novel integration addresses long-term patient scheduling across multiple specialties and dynamically adjusts decisions in response to uncertain surgical durations, ICU occupancy, and patient arrivals. Through reinforcement-learning Approximate Dynamic Programming (ADP) and a column generation heuristic embedded in a Sample Average Approximation (SAA) scheme, their method significantly reduced patient waiting times and total operational costs compared to traditional weekly stochastic scheduling models.
 
 Addressing emergency-related uncertainties, \cite{Miao2021} presented a preventive–reactive approach that manages elective and emergency surgeries sharing the same OR resources. Their model employed chance-constrained optimization to proactively include capacity buffers and enforced periodic slacks, ensuring all emergency surgeries meet strict waiting-time limits. Real-time re-optimization further minimized deviations in elective surgery start times, showcasing excellent performance regarding both responsiveness and elective throughput retention.
+
+Building upon stochastic programming foundations, recent research has advanced distributional robustness methodologies. \cite{Tsang2025} formulated a comprehensive model incorporating both risk-neutral and risk-averse objectives for integrated OR and anesthesiologist scheduling, solving large-scale instances through distributionally robust optimization and column-and-constraint generation. \cite{Wang2024} proposed a Wasserstein distributionally robust framework managing uncertainty without precise probability distributions, achieving computational tractability through mixed-integer conic reformulation and specialized branch-and-cut algorithms. \cite{Makboul2025} addressed multi-objective master surgical scheduling under multiple uncertainties, employing an adapted $\epsilon$-constraint algorithm combined with Monte Carlo simulation to evaluate solution robustness and compute Pareto-optimal schedules.
 
 To incorporate downstream resource constraints explicitly, \cite{Schneider2020} developed a Master Surgery Scheduling (MSS) approach integrating surgery groups with ICU and ward occupancy considerations. Utilizing mixed-integer linear programming (MILP) and a simulated annealing heuristic, the method significantly improved OR utilization and reduced weekday bed occupancy variability. Similarly, \cite{MHallah2019} proposed a two-week cyclic MSS considering stochastic variations in ICU and ward length-of-stay. Employing Sample Average Approximation (SAA), their model notably increased throughput and prevented bed allocation infeasibilities, highlighting the critical importance of incorporating downstream stochastic coupling.
 
@@ -97,9 +105,15 @@ Emphasizing OR architecture flexibility, \cite{Celik2023} investigated a two-sta
 
 Considering stochasticity and rapid real-time responsiveness simultaneously, \citet{Almoghrabi2025} utilized a convex surrogate modeling approach to approximate second-stage recourse costs, solving large-scale stochastic elective-emergency scheduling problems efficiently. This method reserved global daily capacity for emergencies and integrated idle and waiting penalties, enhancing stochastic fidelity without sacrificing computational feasibility.
 
+Advanced optimization techniques continue to push computational boundaries. \cite{Akbarzadeh2025} developed a dedicated branch-price-and-cut algorithm for simultaneous patient planning and surgeon time-block allocation, efficiently handling large-scale combinatorial complexity. \cite{Bernardelli2024} proposed a two-phase stochastic optimization framework distinguishing inpatient and outpatient surgeries, employing chance-constrained integer programming and genetic algorithms under uncertainty in surgery durations, emergency arrivals, and patient no-shows. Game-theoretic approaches have emerged, with \cite{Nash2025} formulating OR scheduling as a multi-agent resource allocation problem using Nash equilibrium concepts to coordinate material and human resources.
+
 To manage adaptive patient allocation under disruptions, \cite{Kamran2020} introduced a Column-Generation-Based Heuristic coupled with a Benders decomposition approach (CGBH-BD). Their method, tailored for modified-block policies, rapidly resolved disruptions by balancing multi-objective trade-offs among elective cancellations, delays, overtime, and emergency patient delays, setting a precedent for real-time decomposition-based solutions.
 
-Among these studies, \cite{Spratt2019} developed the most directly relevant real-time reactive framework addressing the Surgical Case Sequencing Problem (SCSP). Their mixed-integer formulation explicitly managed surgeon and OR specificity, frequent short-notice elective add-ons, and disruptions including emergencies, duration overruns, cancellations, and equipment breakdowns. Their heuristic-based framework enabled periodic real-time rescheduling within milliseconds, achieving high in-hours utilization comparable to solutions with perfect foresight and drastically reducing cancellations. However, this approach lacks optimality guarantees, overlooks downstream ICU and PACU constraints, and treats overtime only as a soft constraint. These limitations strongly motivate our contribution, which directly addresses these gaps by proposing \textcolor{red}{to add}
+Among these studies, \cite{Spratt2019} developed the most directly relevant real-time reactive framework addressing the Surgical Case Sequencing Problem (SCSP). Their mixed-integer formulation explicitly managed surgeon and OR specificity, frequent short-notice elective add-ons, and disruptions including emergencies, duration overruns, cancellations, and equipment breakdowns. Their heuristic-based framework enabled periodic real-time rescheduling within milliseconds, achieving high in-hours utilization comparable to solutions with perfect foresight and drastically reducing cancellations. However, this approach lacks optimality guarantees, overlooks downstream ICU and PACU constraints, and treats overtime only as a soft constraint.
+
+Addressing disruption management and cross-service integration, \cite{IntegratedRobust2025} proposed a distributionally robust optimization framework incorporating machine learning consensus mechanisms for hospital-based ambulatory surgical centers integrated with inpatient OR scheduling, managing disruptions arising from uncertain surgery durations across both service lines. This integration addresses a critical gap in the literature, as research on ambulatory surgery scheduling remains scarce, particularly in the context of hospital-based settings where coordination between inpatient and outpatient ORs is essential but challenging.
+
+These limitations and emerging research directions strongly motivate our contribution, which directly addresses these gaps by proposing a patient-centered OR scheduling framework that: (1) generates multiple distinct, feasible, and optimized time slot options for each patient, enabling genuine shared decision-making; (2) formulates the problem as a MILP with hierarchical objectives that enforce hard capacity constraints and treat overtime as an infeasibility-driven slack variable; and (3) has been deployed and validated in a real clinical environment, demonstrating that operational efficiency and patient autonomy are complementary rather than competing objectives.
 
 \section*{Operating Room Scheduling Problem with Surgical Patient Flow}
 \begin{table*}[ht]
@@ -341,6 +355,66 @@ X_{d,b,h,p,i}
 \end{equation}
 With partition interval equal to $1$ in the code, this effectively prevents multiple appointments of the same $(p,h)$ within the same partition interval.
 
+\section{Patient Ordering Heuristic for Iterative Scheduling}
+\label{sec:patient_ordering}
+
+The MILP formulation generates candidate time slots for all patients simultaneously, producing up to three feasible options per patient. However, in clinical practice, patients do not select their slots in parallel. Instead, the scheduling process unfolds iteratively: each patient sequentially reviews their options, makes a selection, and confirms their chosen slot. Once confirmed, that slot becomes fixed, reducing the option pool for remaining patients. To maximize scheduling feasibility and patient choice across the entire waitlist, the order in which patients are presented for selection becomes critical.
+
+\subsection{Motivation and Algorithm Description}
+
+Consider a naive strategy: processing patients in arbitrary order. Early patients enjoy abundant slot options due to minimal resource contention. However, as subsequent patients confirm slots, remaining options dwindle for late patients, potentially leaving some patients with a single option or none. In contrast, a strategic ordering prioritizes flexible patients those with many feasible slots across the planning horizon for early selection. Flexible patients can afford to choose from their multiple options without exhausting remaining capacity, leaving more options available for constrained patients. This greedy approach maximizes the global pool of feasible options and enhances shared decision-making for all patients.
+
+The patient ordering heuristic computes, for each unscheduled patient $p$, an availability score $\sigma_p$ that quantifies the flexibility of their scheduling:
+
+\begin{equation}
+\sigma_p = \sum_{s \in \mathcal{S}_p} \text{score}(s, p),
+\end{equation}
+
+where $\mathcal{S}_p$ represents the set of feasible slots for patient $p$, and $\text{score}(s, p)$ is computed as:
+
+\begin{equation}
+\text{score}(s, p) = \begin{cases}
++100 & \text{if } s \in [d^{\text{arr}}_p, d^{\text{dep}}_p] \\
+-|s - d^{\text{arr}}_p| & \text{if } s < d^{\text{arr}}_p \\
+-|s - d^{\text{dep}}_p| & \text{if } s > d^{\text{dep}}_p
+\end{cases}
+\end{equation}
+
+where the first case represents slots within the patient's natural availability window, the second penalizes early rescheduling, and the third penalizes late rescheduling.
+
+The scoring system captures the notion that slots aligned with a patient's natural availability window (between arrival and departure dates) are far preferable to those requiring early or late rescheduling. Patients with high total scores indicating many naturally-aligned feasible slots are processed first. After each patient's selection, the system updates the remaining slot availability and recomputes scores for pending patients, adapting dynamically to evolving resource constraints.
+
+\subsection{Algorithmic Framework}
+
+The iterative scheduling process proceeds as follows (see Algorithm \ref{alg:patient_ordering}):
+
+\begin{algorithm}[ht]
+\caption{Iterative Patient Selection and Confirmation}
+\label{alg:patient_ordering}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Proposed slots $\mathcal{S}_{p}$ for each patient $p \in \mathcal{P}$, current assignments $A \gets \emptyset$
+\State \textbf{Output:} Confirmed assignments $A^*$
+\State Initialize $A^* \gets \emptyset$, $\mathcal{P}^{\text{remain}} \gets \mathcal{P}$
+\While{$\mathcal{P}^{\text{remain}} \neq \emptyset$}
+    \For{each patient $p \in \mathcal{P}^{\text{remain}}$}
+        \State Compute score: $\sigma_p \gets \sum_{s \in \mathcal{S}_p} \text{score}(s, p)$
+    \EndFor
+    \State $p^* \gets \arg\max_p \sigma_p$ \quad \text{(select most flexible patient)}
+    \State Sort $\mathcal{S}_{p^*}$ by $\text{score}(s, p^*)$ in descending order
+    \State Display sorted slots to user (physician or patient)
+    \State Receive user confirmation: $s^* \in \mathcal{S}_{p^*}$
+    \State $A^* \gets A^* \cup \{(p^*, s^*)\}$
+    \State $\mathcal{P}^{\text{remain}} \gets \mathcal{P}^{\text{remain}} \setminus \{p^*\}$
+    \State Re-optimize: Update $\mathcal{S}_p$ for all $p \in \mathcal{P}^{\text{remain}}$ given fixed assignments $A^*$
+\EndWhile
+\State \Return $A^*$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Justification and Impact}
+
+This greedy heuristic balances simplicity with effectiveness. By prioritizing flexible patients, it preserves scheduling options for constrained patients without requiring expensive global re-optimization between each confirmation. The heuristic respects the operational constraint that patient confirmations are irreversible once a slot is chosen and locked, the patient is scheduled for the subsequent optimization phases. Empirically, this approach ensures that nearly all patients receive multiple feasible options for choice, supporting genuine shared decision-making in a resource-constrained environment.
+
 \section{Numerical Results}
 \subsection{Performance Metrics on Real-World Data}
 The results, summarized in Table \ref{tab:utilization} and Table \ref{tab:operations}, and graphically represented in Figure \ref{fig:utilization} and Figure \ref{fig:operations}, demonstrate the model's capacity to significantly improve resource deployment while maintaining operational flexibility. Specifically, to isolate and measure the maximum resource utilization achievable by the model, the tests were conducted with an initial constraint where each patient was limited to a single scheduled event. This methodological step allowed for the direct assessment of the \textbf{theoretical capacity} that the optimization framework could liberate within the existing real-world resource constraints.
@@ -483,6 +557,14 @@ Key computational findings:
 
     \item \textbf{Optimality guarantees for typical operations:} For the operationally relevant instances ($P \le 20$ with standard resource availability), the model consistently finds proven optimal or near-optimal solutions within seconds. This ensures that the generated patient options represent genuinely high-quality scheduling decisions that balance patient preferences, surgeon efficiency, and OR utilization.
 \end{enumerate}
+
+\subsubsection{Patient Confirmation and Iterative Scheduling}
+
+Beyond the initial optimization phase, the framework incorporates a critical second phase: patient review and slot confirmation, guided by the patient ordering heuristic described in Section \ref{sec:patient_ordering}. In this phase, patients (or their representatives) sequentially review their proposed time slot options and confirm their preferred choice. This iterative confirmation process directly addresses the paper's core objective of integrating patient autonomy into surgical scheduling.
+
+The confirmation process unfolds as follows: (1) The MILP generates up to three feasible time slot options for each patient, each satisfying all clinical and operational constraints. (2) Using the availability score $\sigma_p$, the system identifies the patient with the most scheduling flexibility, presenting them with their options ranked by clinical desirability (slots closer to natural availability windows are ranked higher). (3) The patient (with physician guidance) selects their preferred slot. (4) Once confirmed, the slot is locked and removed from the remaining option pool. (5) For all remaining patients, the system recomputes available slots given the confirmed assignments and updates availability scores. (6) The process repeats until all patients have confirmed their slots.
+
+This iterative approach ensures several practical benefits. First, flexible patients those with many feasible options confirm early, preventing them from inadvertently consuming options that constrained patients require. Second, the dynamic recomputation reflects real-time operational changes as slots are consumed, ensuring that remaining patients' options remain feasible. Third, it preserves genuine shared decision-making: rather than imposing a single predetermined schedule, the framework presents patients with multiple validated options, allowing them to consider factors beyond pure medical urgency (e.g., personal, family, or occupational constraints). The scoring mechanism ensures that when multiple options exist, patients preferentially view the least disruptive choices first.
 
 \subsubsection{Scalability Perspective}
 The observed computational performance aligns precisely with the system's intended use case. The framework is designed for incremental, consultation-driven scheduling rather than large-scale batch optimization. In this context:
