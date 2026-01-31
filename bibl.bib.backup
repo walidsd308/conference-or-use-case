@@ -1,32 +1,32 @@
 @article{Kamran2020,
 title = {A column-generation-heuristic-based benders’ decomposition for solving adaptive allocation scheduling of patients in operating rooms},
-journal = {Comput. Ind. Eng.},
+journal = {Computers \& Industrial Engineering},
 volume = {148},
 pages = {106698},
 year = {2020},
 issn = {0360-8352},
 doi = {https://doi.org/10.1016/j.cie.2020.106698},
 url = {https://www.sciencedirect.com/science/article/pii/S0360835220304307},
-author = {Mehdi A. Kamran and others},
+author = {Mehdi A. Kamran and Behrooz Karimi and Nico Dellaert},
 keywords = {Adaptive allocation scheduling problem, Elective and non-elective patients, Disruption management, Column-generation-based heuristic, Benders’ decomposition},
 abstract = {This paper investigates the Adaptive Allocation Scheduling Problem with a modified block scheduling policy, in which candidate patients have to be assigned and sequenced into operating room blocks, taking into consideration unanticipated events or disruptions (e.g., arrivals of non-elective patients). A post disruption management approach is considered to tackle the disruptions. In this regard, a mixed-integer linear programming model with multiple objectives including minimization of patients’ cancellation, patients’ tardiness, block overtime, idleness of surgeons, and minimizing the start time of emergency patient’s surgery is proposed. A solution approach consisting of a column-generation-based heuristic algorithm and a Benders’ decomposition technique is developed to solve the model. The efficiency of the formulation and the solution approach is examined through numerical experiments based on hospital records. It is shown that the developed solution approach outperforms the untutored column generation method and is capable of finding close to optimal solutions significantly faster than the standard Benders’ decomposition method.}
 }
 @article{Zhang2021,
 title = {A two-phase optimization model combining Markov decision process and stochastic programming for advance surgery scheduling},
-journal = {Comput. Ind. Eng.},
+journal = {Computers \& Industrial Engineering},
 volume = {160},
 pages = {107548},
 year = {2021},
 issn = {0360-8352},
 doi = {https://doi.org/10.1016/j.cie.2021.107548},
 url = {https://www.sciencedirect.com/science/article/pii/S0360835221004526},
-author = {Jian Zhang and others},
+author = {Jian Zhang and Mahjoub Dridi and Abdellah {El Moudni}},
 keywords = {Advance surgery scheduling, Two-phase optimization model, Markov decision process, Stochastic programming, Column-generation-based heuristic, Sample average approximation},
 abstract = {This paper addresses the advance scheduling of elective surgeries in an operating theater composed of operating rooms and a downstream surgical intensive care unit (SICU). The arrivals of new patients in each week, the duration of each surgery, and the length-of-stay of each patient in the SICU are subject to uncertainty. At the end of each week, the surgery planner determines the surgical blocks to open in the next week and assigns a subset of the surgeries on the waiting list to open surgical blocks. The objective is to minimize the patient-related costs incurred by performing and postponing surgeries as well as the hospital-related costs caused by utilization of surgical resources. Considering that the pure mathematical programming models commonly used in the literature mostly focus on the short-term optimization of surgery schedules, we propose a novel two-phase optimization model that combines Markov decision process (MDP) and stochastic programming to improve the long-term performance of surgery schedules. Moreover, in order to solve realistically sized problems efficiently, we develop a novel column-generation-based heuristic (CGBH) algorithm, then combine it with the sample average approximation (SAA) approach. The experimental results indicate that the SAA-CGBH algorithm is considerably more efficient than the conventional SAA approach, and that the optimal surgery schedules of the two-phase optimization model significantly outperform those of a pure stochastic programming model.}
 }
 @article{Schneider2020,
 title = {Scheduling surgery groups considering multiple downstream resources},
-journal = {Eur. J. Oper. Res.},
+journal = {European Journal of Operational Research},
 volume = {282},
 number = {2},
 pages = {741-752},
@@ -34,13 +34,13 @@ year = {2020},
 issn = {0377-2217},
 doi = {https://doi.org/10.1016/j.ejor.2019.09.029},
 url = {https://www.sciencedirect.com/science/article/pii/S0377221719307854},
-author = {A.J. {Thomas Schneider} and others},
+author = {A.J. {Thomas Schneider} and J. {Theresia van Essen} and Mijke Carlier and Erwin W. Hans},
 keywords = {OR in health services, Resource allocation, Master surgery scheduling, Ward and ICU occupancy, Surgery type clustering},
 abstract = {Surgery groups are clustered surgery procedure types that share comparable characteristics (e.g. expected duration). Scheduling OR blocks leaves many options for operational surgery scheduling and this increases the variation in usage of both the OR and downstream beds. Therefore, we schedule surgery groups to reduce the options for operational scheduling, ultimately bridging the gap between tactical and operational scheduling. We propose a single step mixed integer linear programming (MILP) approach that approximates the bed and OR usage and a simulated annealing approach. Both approaches are compared on a real-life data set and results show that the MILP performs best in terms of solution quality and computation time. Furthermore, the results show that our model may improve the OR utilization from 71% to 85% and decrease the bed usage variation from 53 beds to 11 beds compared to historical data. To show the potential and robustness of our model, we discuss several variants of the model requiring minor modifications. The use of surgery groups makes it easier to implementation our model in practice and, for operational planners, it is instantly clear where to schedule different types of surgery.}
 }
 @article{Miao2021,
 title = {Scheduling elective and emergency surgeries at shared operating rooms with emergency uncertainty and waiting time limit},
-journal = {Comput. Ind. Eng.},
+journal = {Computers \& Industrial Engineering},
 volume = {160},
 pages = {107551},
 year = {2021},
@@ -61,7 +61,7 @@ year = {2023},
 issn = {0305-0483},
 doi = {https://doi.org/10.1016/j.omega.2022.102799},
 url = {https://www.sciencedirect.com/science/article/pii/S0305048322002055},
-author = {Batuhan Çelik and others},
+author = {Batuhan Çelik and Serhat Gul and Melih Çelik},
 keywords = {Surgery scheduling, Stochastic programming, Parallel processing, Progressive hedging},
 abstract = {Parallel processing is a principle which enables simultaneous implementation of anesthesia induction and operating room (OR) turnover with the aim of improving OR utilization. In this article, we study the problem of scheduling surgeries for multiple ORs and induction rooms (IR) that function based on the parallel processing principle under uncertainty. We propose a two-stage stochastic mixed-integer programming model considering the uncertainty in induction, surgery and turnover durations. We sequence patients and set appointment times for surgeries in the first stage and assign patients to IRs at the second stage of the model. We show that an optimal myopic policy can be used for IR assignment decisions due to the special structure of the model. We minimize the expected total cost of patient waiting time, OR idle time and IR idle time in the objective function. We enhance the model formulation using bounds on variables and symmetry-breaking constraints. We implement a novel progressive hedging algorithm by proposing a penalty update method and a variable fixing mechanism. Based on real data of a large academic hospital, we compare our solution approach with several scheduling heuristics from the literature. We assess the additional benefits and costs associated with the implementation of parallel processing using near-optimal schedules. We examine how the benefits are inflated by increasing the number of IRs. Finally, we estimate the value of stochastic solution to underline the importance of considering uncertainty in durations.}
 }
@@ -72,7 +72,7 @@ abstract = {Parallel processing is a principle which enables simultaneous implem
    doi = {10.1007/s10696-019-09371-6},
    issn = {19366590},
    issue = {1},
-   journal = {Flex. Serv. Manuf. J.},
+   journal = {Flexible Services and Manufacturing Journal},
    keywords = {Operating theatres,Operations research in health services,Patient sequencing,Reactive scheduling},
    month = {3},
    pages = {183-211},
@@ -84,8 +84,8 @@ abstract = {Parallel processing is a principle which enables simultaneous implem
 
 @generic{AlAmin2024,
   title={A comprehensive review on operating room scheduling and optimization},
-  author={Al Amin, Md and others},
-  journal={Oper. Res.},
+  author={Al Amin, Md and Baldacci, Roberto and Kayvanfar, Vahid},
+  journal={Operational Research},
   volume={25},
   number={1},
   pages={3},
@@ -95,7 +95,7 @@ abstract = {Parallel processing is a principle which enables simultaneous implem
 
 @article{MHallah2019,
 title = {A stochastic model for scheduling elective surgeries in a cyclic Master Surgical Schedule},
-journal = {Comput. Ind. Eng.},
+journal = {Computers \& Industrial Engineering},
 volume = {129},
 pages = {156-168},
 year = {2019},
@@ -109,7 +109,7 @@ abstract = {In this study we propose a stochastic model that determines the numb
 
 @article{Almoghrabi2025,
 title = {Surgery scheduling in flexible operating rooms by using a convex surrogate model of second-stage costs},
-journal = {Eur. J. Oper. Res.},
+journal = {European Journal of Operational Research},
 volume = {321},
 number = {1},
 pages = {23-40},
@@ -123,18 +123,18 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 }
 
 @article{Zhao2025,
-  author = {Zhao, R. and others},
+  author = {Zhao, R. and Quan, Y. and Fan, G.},
   title = {Optimizing operating room scheduling through multi-level learning and column generation: a novel hybrid approach},
-  journal = {Health Care Manag. Sci.},
+  journal = {Health Care Management Science},
   volume = {28},
   year = {2025},
   doi = {10.1007/s10729-025-09723-9}
 }
 
 @article{Eshghali2024,
-  author = {Eshghali, Masoud and others},
+  author = {Eshghali, Masoud and Kannan, Devika and Salmanzadeh-Meydani, Navid and Esmaieeli Sikaroudi, Amir Mohammad},
   title = {Machine learning based integrated scheduling and rescheduling for elective and emergency patients in the operating theatre},
-  journal = {Ann. Oper. Res.},
+  journal = {Annals of Operations Research},
   year = {2024},
   volume = {332},
   pages = {989--1012},
@@ -142,9 +142,9 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 }
 
 @article{Tsang2025,
-  author = {Tsang, Man Yiu and others},
+  author = {Tsang, Man Yiu and Shehadeh, Karmel S. and Curtis, Frank E. and Hochman, Beth R. and Brentjens, Tricia E.},
   title = {Stochastic Optimization Approaches for an Operating Room and Anesthesiologist Scheduling Problem},
-  journal = {Oper. Res.},
+  journal = {Operations Research},
   volume = {73},
   number = {3},
   pages = {1430--1458},
@@ -153,9 +153,9 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 }
 
 @article{Wang2024,
-  author = {Wang, Yu and others},
+  author = {Wang, Yu and Zhang, Yu and Tang, Jiafu},
   title = {Wasserstein distributionally robust surgery scheduling with elective and emergency patients},
-  journal = {Eur. J. Oper. Res.},
+  journal = {European Journal of Operational Research},
   volume = {314},
   number = {2},
   pages = {509--522},
@@ -166,7 +166,7 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 @article{Akbarzadeh2025,
   author = {Akbarzadeh, Babak and Maenhout, Broos},
   title = {A dedicated branch-price-and-cut algorithm for advance patient planning and surgeon scheduling},
-  journal = {Eur. J. Oper. Res.},
+  journal = {European Journal of Operational Research},
   volume = {322},
   number = {2},
   pages = {448--466},
@@ -177,7 +177,7 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 @article{ElBalka2025,
   author = {El-Balka, R. M. and Sakr, N. and Rabie, A. H. and others},
   title = {A dynamic operation room scheduling strategy based on explainable AI and fuzzy interface engine},
-  journal = {Artif. Intell. Rev.},
+  journal = {Artificial Intelligence Review},
   volume = {58},
   pages = {365},
   year = {2025},
@@ -185,9 +185,9 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 }
 
 @article{Lex2025,
-  author = {Lex, Johnathan R. and others},
+  author = {Lex, Johnathan R. and Abbas, Aazad and Mosseri, Jacob and Singh Toor, Jay and Simone, Michael and Ravi, Bheeshma and Whyne, Cari and Khalil, Elias B.},
   title = {Using Machine Learning to Predict-Then-Optimize Elective Orthopedic Surgery Scheduling to Improve Operating Room Utilization: Retrospective Study},
-  journal = {JMIR Med. Inform.},
+  journal = {JMIR Medical Informatics},
   volume = {13},
   pages = {e70857},
   year = {2025},
@@ -195,9 +195,9 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 }
 
 @article{Bernardelli2024,
-  author = {Bernardelli, Ambrogio Maria and others},
+  author = {Bernardelli, Ambrogio Maria and Bonasera, Lorenzo and Duma, Davide and Vercesi, Eleonora},
   title = {Multi-objective stochastic scheduling of inpatient and outpatient surgeries},
-  journal = {Flex. Serv. Manuf. J.},
+  journal = {Flexible Services and Manufacturing Journal},
   volume = {37},
   pages = {1148--1202},
   year = {2025},
@@ -205,9 +205,9 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 }
 
 @article{Makboul2025,
-  author = {Makboul, Salma and others},
+  author = {Makboul, Salma and Olteanu, Alexandru-Liviu and Sevaux, Marc},
   title = {A multiobjective $\epsilon$-constraint based approach for the robust master surgical schedule under multiple uncertainties},
-  journal = {Eur. J. Oper. Res.},
+  journal = {European Journal of Operational Research},
   volume = {320},
   number = {3},
   pages = {682--698},
@@ -216,8 +216,8 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 
 @article{Nash2025,
   title={Multi-resource constrained elective surgical scheduling with Nash equilibrium toward smart hospitals},
-  author={Xue, Jun and others},
-  journal={Sci. Rep.},
+  author={Xue, Jun and Li, Zhi and Zhang, Shuangli},
+  journal={Scientific Reports},
   volume={15},
   number={1},
   pages={3946},
@@ -227,8 +227,8 @@ abstract = {We study the elective surgery planning problem in a hospital with op
 
 @article{IntegratedRobust2025,
   title={Integrated robust scheduling for inpatient surgery and ambulatory surgery},
-  author={Dai, Zongli and others},
-  journal={Comput. Oper. Res.},
+  author={Dai, Zongli and Gong, Xiaoyue and Wang, Jian-Jun and Yu, Lejing and Shi, Jim Junmin},
+  journal={Computers \& Operations Research},
   pages={107098},
   year={2025},
   publisher={Elsevier}
