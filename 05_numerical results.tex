@@ -1,0 +1,130 @@
+\section{Numerical Results}\label{sec:numerical_results}
+\subsection{Hospital Data Structure}
+The computational experiments use a realistic dataset from the Department of Orthopedic Surgery at the University Hospital of Montpellier, focusing on elective surgical procedures over a three-week period. This framework is used to test the model's ability to optimize and condense the pre-existing surgical schedule.
+
+\subsubsection{Patient and Procedure Data}
+
+The dataset includes $134$ patients requiring surgery, categorized into four main procedure types: arthroplasty, foot and ankle surgery, soft tissue repair, and  arthroscopy.
+
+Operative time varies widely, ranging from $15$ to $240$ minutes. The mean duration is $71.86$ minutes, and the median is $80$ minutes. A fixed $50$-minute post-operative turnover time is assumed for all cases.
+
+\subsubsection{Resource and Block Constraints}
+
+A total of $11$ physicians are involved. Their schedules are fixed, requiring availability in at least one of the two weeks modeled. Two head physicians are included; one is capable of managing "swinging rooms," operating concurrently in up to $3$ Operating Rooms (ORs).
+
+Three OR blocks are available all working weekdays, providing $10.5$ hours of capacity daily. One limited OR is open only on Wednesdays and Fridays, providing $6.5$ hours of capacity daily.
+
+\subsection{Performance Metrics on Real-World Data}
+
+The results, summarized in Table \ref{tab:utilization}, and graphically represented in Figure \ref{fig:utilization}, demonstrate the model's capacity to significantly improve resource deployment while maintaining operational flexibility. Specifically, to isolate and measure the maximum resource utilization achievable by the model, the tests were conducted with an initial constraint where each patient was limited to a single scheduled event. This methodological step allowed for the direct assessment of the theoretical capacity that the optimization framework could liberate within the existing real-world resource constraints.
+\begin{table}[htb]
+\centering
+\caption{Comparison of Surgical Block Time Utilization (\%): Real Case vs. Optimized Schedule over 3 Weeks}
+\label{tab:utilization}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Week} & \textbf{Real Case (\%)} & \textbf{Optimized (\%)} & \textbf{Change (p.p.)} \\
+\midrule
+1 & 72\% & 95\% & +23 \\
+2 & 73\% & 91\% & +18 \\
+3 & 79\% & 39\% & -40 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htb]
+    \centering
+    \begingroup
+        \includegraphics[scale=.38]{figures/figure_graph_per.pdf}
+    \endgroup
+    \caption{Surgical Block Time Utilization: Real Case vs. Optimized Schedule.}
+    \label{fig:utilization}
+\end{figure}
+% \begin{table}[htb]
+% \centering
+% \caption{Comparison of Net Operations Gained: Real Case vs. Optimized Schedule over 3 Weeks}
+% \label{tab:operations}
+% \begin{tabular}{ccc}
+% \toprule
+% \textbf{Week} & \textbf{Real Case (Operations)} & \textbf{Optimized (Operations)} \\
+% \midrule
+% 1 & 18 & 3 \\
+% 2 & 16 & 5 \\
+% 3 & 11 & 36 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+% \begin{figure}[htb]
+%     \centering
+%     \begingroup
+%         \includegraphics[scale=0.38]{figures/figure_graph_count.pdf}
+%     \endgroup
+%     \caption{Net Operations Gained: Real Case vs. Optimized Schedule.}
+%     \label{fig:operations}
+% \end{figure}
+
+\noindent
+The optimization framework demonstrates strategic redistribution across the planning horizon. In Weeks 1 and 2, utilization increased from 72–73\% to 91–95\% by efficiently condensing the workload into available block time. Week 3 showed reduced utilization (79\% to 39\%) as capacity was maximized early, but the key benefit emerges in overall throughput: the optimized schedule achieved 36 net operations gained versus 11 in the real case, demonstrating superior efficiency over the multi-week horizon.
+\subsection{Simulation Results and Benchmark Design Rationale}
+
+The benchmark design reflects the operational reality of the deployed system rather than theoretical scalability limits. Unlike traditional operating room scheduling approaches that optimize large batches of patients at fixed planning intervals (e.g., weekly master surgical schedules), this framework operates in a consultation-driven, incremental scheduling mode.
+\subsubsection{Operational Context Justifying Benchmark Scale}
+The scheduling process is tightly integrated with consultation: patients enter immediately after consultation with surgical timeline constraints, are assigned to their surgeon's schedule, and generate 3 feasible time slots within seconds. Rather than batch optimization, the system processes patients continuously, maintaining physician wait lists of 5--20 patients. This continuous-flow model prevents backlogs and makes benchmark instances of 10--40 patients realistic operational scenarios (details in Table \ref{tab:benchmark_data}).
+
+
+\begin{table}[ht]
+    \centering
+    \caption{Benchmark Data Results}
+    \label{tab:benchmark_data}
+    \resizebox{\columnwidth}{!}{%
+        \begin{tabular}{ccccccc}
+            \toprule
+            Physicians & Patients & Blocs & Events & \parbox{1.5cm}{\centering Patients\\with Events} & \parbox{1.2cm}{\centering Avg per\\Patient} & \parbox{1.2cm}{\centering Run\\Time} \\
+            \midrule
+            1 & 10 & 2 & 30 & 10 & 3.0 & 0.23 \\
+            1 & 10 & 3 & 30 & 10 & 3.0 & 0.17 \\
+            2 & 10 & 2 & 30 & 10 & 3.0 & 0.40 \\
+            2 & 10 & 3 & 30 & 10 & 3.0 & 0.31 \\
+            1 & 20 & 2 & 60 & 20 & 3.0 & 600.0 \\
+            1 & 20 & 3 & 60 & 20 & 3.0 & 17.89 \\
+            2 & 20 & 2 & 60 & 20 & 3.0 & 1.40 \\
+            2 & 20 & 3 & 60 & 20 & 3.0 & 3.94 \\
+            1 & 40 & 2 & 96 & 40 & 2.4 & 600.0 \\
+            1 & 40 & 3 & 111 & 40 & 2.77 & 600.0 \\
+            2 & 40 & 2 & 100 & 40 & 2.5 & 600.0 \\
+            2 & 40 & 3 & 111 & 40 & 2.77 & 600.0 \\
+            \bottomrule
+        \end{tabular}%
+    }
+\end{table}
+
+\subsubsection{Computational Performance and Solution Quality}
+The model was evaluated across three dimensions: patient count ($P \in \{10, 20, 40\}$), number of physicians ($\{1, 2\}$), and operating room blocks ($\{2, 3\}$). For each configuration, up to three feasible time slots per patient were generated, resulting in 30 to 111 total candidate events (Table \ref{tab:benchmark_data}).
+
+Key findings: (1) For typical operational scales ($P \le 20$), the solver consistently delivers solutions in under 18 seconds, enabling real-time consultation-integrated workflow. (2) Increasing OR availability from 2 to 3 blocks dramatically improves tractability runtime drops from 600s (timeout) to ~18s for $P=20$ (Figure \ref{fig:time_uses}). (3) For larger instances ($P=40$) reaching the 600-second timeout, solutions remain feasible with mean optimality gaps below 15\% and sufficient option generation (2.4–2.77 options per patient; Figure \ref{fig:events_per_patient}). These stress-test scenarios are rare in practice due to the continuous-flow model; when they occur, 600 seconds remains acceptable for offline batch processing. (4) For operationally relevant instances ($P \le 20$), proven optimal or near-optimal solutions ensure high-quality scheduling decisions.
+
+\subsubsection{Patient Confirmation and Iterative Scheduling}
+
+The framework's second phase guides patient review and slot confirmation. The MILP generates up to three feasible options per patient; using availability score $\sigma_p$, the system identifies flexible patients for early confirmation, then recomputes remaining options dynamically. This iterative approach ensures flexible patients consume non-critical options first, preserving choice for constrained patients. Rather than imposing a predetermined schedule, patients review multiple validated options ranked by clinical desirability, enabling genuine shared decision-making that considers personal and occupational constraints.
+
+\subsubsection{Scalability Perspective}
+The computational performance aligns with the system's consultation-driven design. Small-to-moderate instances ($P \le 20$) solve optimally in real-time for primary operations; large instances ($P = 40$) reach time limits but produce high-quality solutions for rare batch scenarios. The limited event pool (3 options per patient) maintains tractability while preserving patient choice. The current MILP formulation balances solution quality, efficiency, and deployability for the continuous-flow paradigm.
+
+\begin{figure}[ht]
+    \centering
+    \begingroup
+    \sbox0{\includegraphics{figures/test_simulation_v1.pdf}}%
+        \includegraphics[clip,trim=1cm 12.5cm {.5\wd0} 0,width=7.5cm]{figures/test_simulation_v1.pdf}
+    \endgroup
+    \caption{Average slots per scheduled patient}
+    \label{fig:events_per_patient}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\columnwidth]{figures/time_uses.pdf}
+    \caption{Run time per instance (line plot with logarithmic scale)}
+    \label{fig:time_uses}
+\end{figure}
+

@@ -1,0 +1,47 @@
+\section{Flexibility-First Heuristic for Iterative Scheduling}
+\label{sec:patient_ordering}
+
+In clinical practice, patients select their time slots sequentially rather than in parallel. Once a patient confirms a slot, it becomes fixed for subsequent optimizations, reducing the option pool for remaining patients. The order in which patients are presented for selection becomes critical to maximizing feasibility and preserving choice for all patients.
+
+This heuristic prioritizes patients with the most flexible schedules (high availability scores) for early selection. Such flexible patients can choose from multiple options without constraining remaining slots, thereby preserving options for constrained patients. For each unscheduled patient $p$, an availability score $\sigma_p$ quantifies scheduling flexibility:
+
+\begin{equation}
+\sigma_p = \sum_{s \in \mathcal{S}_p} \text{score}(s, p),
+\end{equation}
+
+where $\mathcal{S}_p$ is the set of feasible slots and $\text{score}(s, p)$ is:
+
+\begin{equation}
+\text{score}(s, p) = \begin{cases}
++100 & \text{if } s \in [d^{\text{arr}}_p, d^{\text{dep}}_p] \\
+-|s - d^{\text{arr}}_p| & \text{if } s < d^{\text{arr}}_p \\
+-|s - d^{\text{dep}}_p| & \text{if } s > d^{\text{dep}}_p
+\end{cases}
+\end{equation}
+
+Patients with higher $\sigma_p$ are processed first. After each patient confirms a selection, slot availability is updated and scores are recomputed for remaining patients.
+
+\begin{algorithm}[ht]
+\caption{Iterative Patient Selection and Confirmation}
+\label{alg:patient_ordering}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Proposed slots $\mathcal{S}_{p}$ for each patient $p \in \mathcal{P}$, current assignments $A \gets \emptyset$
+\State \textbf{Output:} Confirmed assignments $A^*$
+\State Initialize $A^* \gets \emptyset$, $\mathcal{P}^{\text{remain}} \gets \mathcal{P}$
+\While{$\mathcal{P}^{\text{remain}} \neq \emptyset$}
+    \For{each patient $p \in \mathcal{P}^{\text{remain}}$}
+        \State Compute score: $\sigma_p \gets \sum_{s \in \mathcal{S}_p} \text{score}(s, p)$
+    \EndFor
+    \State $p^* \gets \arg\max_p \sigma_p$ \quad \text{(select most flexible patient)}
+    \State Sort $\mathcal{S}_{p^*}$ by $\text{score}(s, p^*)$ in descending order
+    \State Display sorted slots to user (physician or patient)
+    \State Receive user confirmation: $s^* \in \mathcal{S}_{p^*}$
+    \State $A^* \gets A^* \cup \{(p^*, s^*)\}$
+    \State $\mathcal{P}^{\text{remain}} \gets \mathcal{P}^{\text{remain}} \setminus \{p^*\}$
+    \State Re-optimize: Update $\mathcal{S}_p$ for all $p \in \mathcal{P}^{\text{remain}}$ given fixed assignments $A^*$
+\EndWhile
+\State \Return $A^*$
+\end{algorithmic}
+\end{algorithm}
+
+
