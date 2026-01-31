@@ -2,18 +2,12 @@
 
 This study presents a patient-centered operating room (OR) scheduling framework that successfully balances operational optimization with patient autonomy and shared decision-making. Implemented in the orthopedic department at the University Hospital of Montpellier (France), the system shows that incorporating the human element into surgical scheduling is computationally feasible and operationally beneficial.
 
-The framework is formulated as a mixed-integer linear program with hierarchical objectives. Unlike conventional approaches, which impose predetermined time slots, our system generates up to three distinct scheduling options per patient, each of which satisfies all clinical and operational constraints. This transformation empowers patients, turning them from passive recipients into active participants in their care timeline.
+The proposed solution is formulated as a mixed-integer linear program with hierarchical objectives, generating up to three distinct scheduling options per patient. A Flexibility-First heuristic prioritizes flexible patients (availability score $\sigma_p$) for early selection, preserving options for constrained patients through dynamic re-optimization. This empowers patients to actively participate in their care timeline.
 
-Benchmark simulations conducted at varying operational scales demonstrate robust performance, showing significant improvements in resource deployment and utilization rates. These simulations include 10 to 40 patients, one to two physicians, and two to three operating rooms (ORs). Even when generating multiple options per patient, the system optimizes OR capacity and minimizes assignment errors using a weighted hierarchical objective function. The proposed solution effectively facilitates shared decision-making without compromising scheduling efficiency by integrating a physician planning interface with the API for optimization and a patient selection interface.
+Benchmark simulations across 10 to 40 patients, one to two physicians, and two to three operating rooms (ORs) demonstrate robust performance. Real-world validation (134 patients, 3 weeks) achieved 72--73\% to 91--95\% utilization increases and 36 net operations gained versus 11 in the real case. For operationally relevant scales ($P \le 20$), solutions arrive in under 18 seconds, enabling real-time workflow. The weighted hierarchical objective function balances OR capacity optimization with shared decision-making.
 
 The framework was developed specifically for elective orthopedic surgery, where scheduling flexibility tends to be higher. However, validation in other surgical specialties and at larger institutional scales is still necessary.
 
-Future extensions should incorporate stochastic elements to handle variability and emergency cases, integrate machine learning to predict preferences, and develop real-time rescheduling capabilities.
+Future work should address stochastic elements, machine learning for preferences, and real-time rescheduling. Genetic algorithms could enhance scalability for larger institutional deployments beyond current limits.
 
 This work shows that operational excellence and patient-centered care can be integrated through thoughtful optimization design, providing a practical way to humanize healthcare operations management.
-\ifCLASSOPTIONcaptionsoff
-  \newpage
-\fi
-
-\bibliographystyle{plain}
-\bibliography{bibl}
