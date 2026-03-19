@@ -1,4 +1,6 @@
-\section{Operating Room Scheduling Problem with Surgical Patient Flow}
+
+
+\section{MILP Model with Patient Preference}
 \begin{table*}[ht]
 \centering
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll}
@@ -27,7 +29,7 @@ $\overline{E}_{b,d}$ & Upper bound on capacity violation slack \\
 $w_{p,h}$ & Compatibility weight between patient $p$ and physician $h$\\
 $a_{p,h,b,d}$ & Preference weight for assigning $(p,h)$ to $(b,d)$\\
 $n^{\text{pre}}_{b,d}$ & Number of pre-defined operation types in block $b$ on day $d$ (aggregated across all physicians)\\
-$M$ & Big-M constant, e.g.\ $M \geq|\mathcal{B}|\,|\mathcal{H}|\,|\mathcal{P}|\,|\mathcal{I}|$\\
+$M$ & Big-M constant, e.g.\ $M \geq|\mathcal{B}|\cdot|\mathcal{H}|\cdot|\mathcal{P}|\cdot|\mathcal{I}|$\\
 \midrule
 $\alpha_1=10^3$ & Weight of patient-assignment errors \\
 $\alpha_2=10^1$ & The weight of the block capacity violation (\scriptsize{is only used to schedule urgency, replacing elective patients)}.\\
@@ -68,28 +70,8 @@ $u_{d,b,h,k}$ & $\{0,1\}$ &
 \label{tab:variables}
 \end{table*}
 
-\subsection{Problem Statement}
-
-The problem addresses the medium-term scheduling of elective orthopedic surgery patients at CHU Montpellier. This task generates an optimized schedule by assigning patients ($p \in \mathcal{P}$) to specific days ($d \in \mathcal{D}$), operating rooms ($b \in \mathcal{B}$), and physicians ($h \in \mathcal{H}$), within the planning horizon $T$ (see Table \ref{tab:parameters} for notation).
-
-We formulate the scheduling decision as an optimization problem satisfying multiple constraints and optimizing a hierarchical multi-criteria objective function:
-
-
-\textbf{Clinical and Temporal Constraints:} The solution must respect essential patient-specific requirements, including the operating time ($\tau_p$), post-operative time ($\tau^{\text{post}}_p$), and the patient's earliest ($d^{\text{arr}}_p$) and latest ($d^{\text{dep}}_p$) feasible scheduling days. Furthermore, the schedule must adhere to the resource availability (e.g., OR opening indicator $B_{b,d}$ and capacity $C_{b,d}$) and the compatibility profiles ($w_{p,h}$) between patients and physicians.
-    
-\textbf{Institutional Constraints:} The model enforces block allocation rules by minimizing unplanned overtime (represented by the capacity violation slack variable $E_{b,d}$) and respecting pre-defined assignments ($n^{\text{pre}}_{b,d}$).
-    
-\textbf{Hierarchical Optimization Objectives:} The objective minimizes a weighted sum of violations, structured hierarchically by penalty weights ($\alpha_1$ to $\alpha_5$):
-    \begin{itemize}
-        \item \textbf{Priority 1 (Highest):} Minimize non-feasible patient assignments (driven by $\alpha_1$).
-        \item \textbf{Priority 2:} Minimize capacity and time constraint violations (driven by $\alpha_2$) and minimize early or late scheduling relative to the patient's stay limits (driven by $\alpha_3$).
-        \item \textbf{Priority 3 (Lowest):} Minimize specialty fragmentation (driven by $\alpha_4$) and efficiently manage day usage (driven by $\alpha_5$), which promotes operational stability and maximizes resource utilization.
-    \end{itemize}
-
-
-\subsection{Operational Context and Patient Flow}
-
-The scheduling framework operates within a specific clinical workflow that differs from traditional batch scheduling approaches. In practice, patients are not accumulated and scheduled in large batches at fixed weekly intervals. Instead, the system processes patients incrementally following their consultation appointments, where the operating physician determines the surgical need and assigns the patient to their own surgical schedule.
+\subsection{Operational Context}
+The scheduling operates within a clinical workflow that differs from traditional batch scheduling approaches. In practice, patients are not accumulated and scheduled in large batches at fixed weekly intervals. Instead, the system processes patients incrementally as they complete their consultation appointments, where the operating physician determines the surgical need and assigns the patient to their surgical schedule.
 
 In this incremental process:
 \begin{itemize}
@@ -102,15 +84,30 @@ In this incremental process:
 
 Consequently, each physician maintains a wait list of patients pending surgical scheduling, which typically contains between 5 and 15 patients at any given time. This wait-list represents patients who have been consulted and are awaiting either (a) the generation of feasible time slots, (b) patient confirmation of their selected slot, or (c) resolution of specific medical or administrative prerequisites. 
 
-Wait lists remain small (5-15 patients, maximum 20) because patients flow continuously through the system rather than accumulating into backlogs.
+Wait-lists remain small (5-15 patients, maximum 20) because patients flow continuously through the system rather than accumulating into backlogs.
 
-Section \ref{sec:numerical_results} uses instance sizes of 10-40 patients, matching the typical daily to weekly scheduling workload.
+
+\subsection{Constraints description}
+We formulate the scheduling decision as an optimization problem satisfying multiple constraints and optimizing a hierarchical multi-objective function (data notations are in Table \ref{tab:parameters}):
+
+\textbf{Clinical and Temporal Constraints:} The solution must respect essential patient-specific requirements, including the operating time ($\tau_p$), post-operative time ($\tau^{\text{post}}_p$), and the patient's earliest ($d^{\text{arr}}_p$) and latest ($d^{\text{dep}}_p$) feasible scheduling days. Furthermore, the schedule must adhere to the resource availability (OR opening $B_{b,d}$, capacity $C_{b,d}$) and the compatibility between patients and physicians ($w_{p,h}$).
+    
+\textbf{Hierarchical Objectives:} The objective minimizes a weighted sum of violations, structured hierarchically by penalty weights ($\alpha_1$ to $\alpha_5$):
+    \begin{itemize}
+        \item \textbf{Priority 1:} Minimize unassigned patients ($\alpha_1$).
+        \item \textbf{Priority 2:} Minimize capacity and time constraint violations, including early or late scheduling relative to the patient's stay limits ($\alpha_3$). Capacity violations ($\alpha_2$) are permitted only for urgent cases replacing elective patients.
+        \item \textbf{Priority 3:} Minimize specialty fragmentation ($\alpha_4$) and efficiently manage day usage ($\alpha_5$), which promotes operational stability and maximizes resource utilization.
+    \end{itemize}
+
+ 
+
 \subsection{Mathematical model}
 
-The operational scheduling problem is formulated as a Mixed-Integer Linear Program (MILP), which seeks to optimize patient assignments across operating rooms and days. The model addresses multiple conflicting objectives with hierarchical priorities (reflected by the $\alpha$ weights in Table \ref{tab:parameters}). This guarantees that higher-priority goals, such as minimizing assignment errors ($\alpha_1=10^3$), are satisfied before addressing lower-priority concerns. The model's sets and parameters are detailed in Table \ref{tab:parameters}, and its decision variables are defined in Table \ref{tab:variables}.
+The operational scheduling problem is formulated as a MILP, with the objective to assign patients across operating rooms and days. The model's sets and parameters are detailed in Table \ref{tab:parameters}, and its decision variables are defined in Table \ref{tab:variables}.
 
 \subsubsection{Objective}
-The objective function, $\max Z$, is a multi-objective optimization problem with a layered hierarchy enforced by hierarchically ordered weights ($\alpha_k$). The function maximizes the reward component for high-priority assignments ($\pi_p$) and preferred assignments (based on $w_{p,h}$ and $a_{p,h,b,d}$), where the reward is proportionally greater for assignments scheduled earlier in the block (smaller intra-day index $i$). The model balances rewards against penalties for assignment errors ($\alpha_1$, $e_{p,i}$), capacity violations ($\alpha_2$, $E_{b,d}$), early/late patient scheduling ($\alpha_3$, $EA_{p,i}$, $LD_{p,i}$), and specialty fragmentation ($\alpha_4$, $N_{b,h}$).
+The objective function maximizes $Z$ using hierarchically ordered weights ($\alpha_k$). Patient assignment receives highest priority: the model minimizes assignment errors ($\alpha_1=10^3$, $e_{p,i}$) while maximizing rewards for high-priority patients ($\pi_p$), preferred physician matches ($w_{p,h}$), and favorable block-day assignments ($a_{p,h,b,d}$). Earlier intra-day scheduling (smaller index $i$) receives proportionally higher reward.
+
 
 \begin{align}
 \max \; Z
@@ -135,7 +132,7 @@ The objective function, $\max Z$, is a multi-objective optimization problem with
 e_{p,i}
 = 1,
 \qquad
-\forall p\in\mathcal{P},\; \forall i\in\mathcal{I}.
+\forall p\in\mathcal{P},\; \forall i\in\mathcal{I}
 \label{c:one-assignment}
 \end{equation}
 (If $e_{p,i}=1$ then $p$ is not assigned at index $i$; otherwise $p$ must be assigned exactly once at that index.)
@@ -145,11 +142,11 @@ e_{p,i}
 \begin{align}
 &\sum_{h\in\mathcal{H}} \sum_{p\in\mathcal{P}} \sum_{i\in\mathcal{I}}
    X_{d,b,h,p,i}\, (\tau_p + \tau^{\text{post}}_p)
-\;\le\;
-C_{b,d} + \text{stdPost} + E_{b,d},
+\le
+C_{b,d}+\text{\small  stdPost}+E_{b,d}
 \label{c:capacity}\\
 &0 \le E_{b,d} \le \overline{E}_{b,d},
-\qquad \forall b\in\mathcal{B},\; \forall d\in\mathcal{D}: B_{b,d}=1.
+\qquad \forall b\in\mathcal{B},\; \forall d\in\mathcal{D}: B_{b,d}=1
 \end{align}
 
 \textbf{Patient availability vs.\ arrival/departure (early/late violations).}
@@ -181,9 +178,9 @@ X_{d,b,h,p,i}
 \begin{equation}
 \sum_{b\in\mathcal{B}}\sum_{h\in\mathcal{H}}\sum_{p\in\mathcal{P}}\sum_{i\in\mathcal{I}}
 X_{d,b,h,p,i}
-\;\le\;
-M \, z_d,
-\qquad \forall d\in\mathcal{D}.
+\le
+M \cdot z_d,
+\qquad \forall d\in\mathcal{D}
 \label{c:day-activation}
 \end{equation}
 If any $X_{d,b,h,p,i}=1$ for a given $d$, then $z_d$ must be $1$ (and the day is penalized in the objective by \eqref{obj:day-usage}).
@@ -191,42 +188,41 @@ If any $X_{d,b,h,p,i}=1$ for a given $d$, then $z_d$ must be $1$ (and the day is
 \textbf{Specialty indicators and fragmentation per doctor and room.}
 
 \begin{align}
-\forall p\in\mathcal{P}:& k(p)=k,\; \forall i\in\mathcal{I},\\
-u_{d,b,h,k} &\ge X_{d,b,h,p,i},
+u_{d,b,h,k} &\ge X_{d,b,h,p,i}, \qquad \forall p\in\mathcal{P}: k(p)=k,\quad \forall i\in\mathcal{I}
 \label{c:u-lower}\\
-u_{d,b,h,k} &\le \sum_{p\in\mathcal{P}:k(p)=k}\sum_{i\in\mathcal{I}} X_{d,b,h,p,i},
+u_{d,b,h,k} &\le \sum_{p\in\mathcal{P}:k(p)=k}\sum_{i\in\mathcal{I}} X_{d,b,h,p,i}
 \label{c:u-upper}
 \end{align}
 so $u_{d,b,h,k}$ becomes 1 if $(b,h)$ actually executes at least one case of type $k$ on day $d$.
 
 The aggregated number of specialties per physician and block is constrained by
 \begin{equation}
-\sum_{k\in\mathcal{K}} u_{d,b,h,k} - 1 + n^{\text{pre}}_{b,d} \;\le\; N_{b,h},
- \forall d\in\mathcal{D},\; \forall b\in\mathcal{B},\; \forall h\in\mathcal{H}.
+\sum_{k\in\mathcal{K}} u_{d,b,h,k} - 1 + n^{\text{pre}}_{b,d}\le N_{b,h},
+ \quad \forall d\in\mathcal{D},\forall b\in\mathcal{B}, \forall h\in\mathcal{H}
 \label{c:N-bh}
 \end{equation}
 
-\textbf{Minimum spacing of appointments per patient and physician.}
+\textbf{Minimum spacing between slots per patient}
 
 \begin{equation}
 \sum_{d\in P}\sum_{b\in\mathcal{B}}\sum_{i\in\mathcal{I}}
 X_{d,b,h,p,i}
-\;\le\; 1,
-\qquad
-\forall P\in\mathcal{D}^{\text{part}},\; \forall h\in\mathcal{H},\; \forall p\in\mathcal{P}.
+\le 1,\quad
+\forall P\in\mathcal{D}^{\text{part}}, \forall h\in\mathcal{H}, \forall p\in\mathcal{P}
 \label{c:spacing}
 \end{equation}
 With partition interval equal to $1$ in the code, this effectively prevents multiple appointments of the same $(p,h)$ within the same partition interval.
 
-\subsection{Flexibility-First Heuristic for Iterative Scheduling}
+\subsection{Flexibility-First Heuristic}
 \label{sec:patient_ordering}
 
-In clinical practice, patients select their time slots sequentially rather than in parallel. Once a patient confirms a slot, it becomes fixed for subsequent optimizations, reducing the option pool for remaining patients. The order in which patients are presented for selection becomes critical to maximizing feasibility and preserving choice for all patients.
+Patients select their surgery time slots sequentially rather than simultaneously. Once a patient confirms a time slot, it becomes fixed, and subsequent optimizations will not take it into consideration for further recalculations. This reduces the possible options for patients remaining in the pool. Therefore, the order in which patients are presented for selection is critical to maximizing the feasibility of the solution and preserving the best options for all patients.
 
-This heuristic prioritizes patients with the most flexible schedules (high availability scores) for early selection. Such flexible patients can choose from multiple options without constraining remaining slots, thereby preserving options for constrained patients. For each unscheduled patient $p$, an availability score $\sigma_p$ quantifies scheduling flexibility:
+This heuristic prioritizes patients with the most flexible schedules (high availability scores) based on the MILP results for early selection. Such flexible patients can choose from multiple good-quality slots. For each unscheduled patient pp
+p, an availability score $\sigma_p$ quantifies scheduling flexibility:
 
 \begin{equation}
-\sigma_p = \sum_{s \in \mathcal{S}_p} \text{score}(s, p),
+\sigma_p = \sum_{s \in \mathcal{S}_p} \text{score}(s, p)
 \end{equation}
 
 where $\mathcal{S}_p$ is the set of feasible slots and $\text{score}(s, p)$ is:
@@ -239,9 +235,10 @@ where $\mathcal{S}_p$ is the set of feasible slots and $\text{score}(s, p)$ is:
 \end{cases}
 \end{equation}
 
-Patients with higher $\sigma_p$ are processed first. After each patient confirms a selection, slot availability is updated and scores are recomputed for remaining patients.
+% Patients with higher $\sigma_p$ are processed first. 
+Patients with higher availability scores $\sigma_p$ are prioritized in the selection sequence. After each patient confirms a selection, slot availability is updated and scores are recomputed for remaining patients. Algorithm \ref{alg:patient_ordering}
 
-\begin{algorithm}[ht]
+\begin{algorithm}[H]
 \caption{Iterative Patient Selection and Confirmation}
 \label{alg:patient_ordering}
 \begin{algorithmic}[1]
@@ -263,5 +260,4 @@ Patients with higher $\sigma_p$ are processed first. After each patient confirms
 \State \Return $A^*$
 \end{algorithmic}
 \end{algorithm}
-
 

@@ -12,6 +12,7 @@
 \usepackage{multirow} 
  \usepackage{natbib} 
 \usepackage{caption}
+\usepackage{lipsum}
 \usepackage{url}
 \usepackage[table]{xcolor}
 \captionsetup{
@@ -40,29 +41,30 @@ Optimizing Surgical Patient Flow through Operating Room Scheduling: A Use Case S
 \textit{\(^{2}\) SWAPPY, Paris, France}\\
 \textit{\(^{3}\) Hôpital Lapeyronie, Orthopedic Service, Montpellier, France}\\
 walid.abdelaidoum@etud.univ-paris8.fr, abdou@swappy.fr, larbi.boubchir@univ-paris8.fr,\\
-l-dagneaux@chu-montpellier.fr, sdecouasnon@swappy.fr}
-
+professeur.dagneaux@gmail.com, sdecouasnon@swappy.fr}
 }
 \maketitle
 
+
+
+\IEEEpeerreviewmaketitle
+\input{00_abstruct}
 \begin{IEEEkeywords}
 Operating Room Scheduling, Surgical Patient Flow, Mixed-integer Linear Programming, Optimization, eHealth.
 \end{IEEEkeywords}
-
-\IEEEpeerreviewmaketitle
-\input{00_abstract}
 \input{01_introduction}
 \input{02_related_work}
 \input{03_operating room scheduling problem with surgical patient flow}
-\input{04_flexibility-first heuristic for iterative scheduling}
 \input{05_numerical results}
 \input{06_conclusion}
-\input{07_acknowledgments}
+% \input{07_acknowledgements}
 \ifCLASSOPTIONcaptionsoff
   \newpage
 \fi
 
 \bibliographystyle{plain}
+% \enlargethispage{-3in}
+
 \bibliography{bibl}
 
 \end{document}
