@@ -12,7 +12,7 @@ Three OR blocks are available all working weekdays, providing $10.5$ hours of ca
 
 \subsection{Real-World Performance}
 
-The results, summarized in Table \ref{tab:utilization} and Figure \ref{fig:utilization}, demonstrate the model's capacity to improve resource deployment while maintaining operational flexibility. To isolate maximum resource utilization, tests limited each patient to a single scheduled event. This step directly assessed the theoretical capacity within existing real-world resource constraints.
+The results, summarized in Table \ref{tab:utilization} and Figure \ref{fig:utilization}, show that the model improves resource utilization while maintaining scheduling flexibility. To isolate maximum resource utilization, tests limited each patient to a single scheduled event. This step directly assessed the theoretical capacity within existing real-world resource constraints.
 \begin{table}[htb]
 \centering
 \caption{Comparison of Surgical Block Time Utilization (\%): Real Case vs. Optimized Schedule over 3 Weeks}
@@ -61,12 +61,12 @@ The results, summarized in Table \ref{tab:utilization} and Figure \ref{fig:utili
 % \end{figure}
 
 \noindent
-The optimization model demonstrates strategic redistribution across the planning horizon. In Weeks 1--2, utilization increased from 72--73\% to 91--95\% by condensing workload into available block time. In the third week, utilization decreased from 79\% to 3\% because most patients had already been assigned to the first two weeks. In these tests, we did not include fictitious patients; the objective was to redistribute existing patients to evaluate whether utilization gains were achievable in previously completed schedules.
+The model redistributes patients across the planning horizon. In Weeks 1--2, utilization increased from 72--73\% to 91--95\% by condensing workload into available block time. In the third week, utilization decreased from 79\% to 39\% because most patients had already been assigned to the first two weeks. In these tests, we did not include fictitious patients; the objective was to redistribute existing patients to evaluate whether utilization gains were achievable in previously completed schedules.
 
 
 \subsection{Simulation Results}
 
-The benchmarks reflect the operational context of the deployed system. The scheduling process integrates with consultation: patients enter immediately after consultation, are assigned to their surgeon's schedule, and generate 3 feasible time slots within seconds. The system processes patients continuously, maintaining physician wait lists of 5--20 patients. This continuous-flow model prevents backlogs, making benchmark instances of 10--40 patients realistic operational scenarios (Table \ref{tab:benchmark_data}).
+Benchmark instances of 10--40 patients match realistic operational scales, given the continuous-flow model described in Section III-A (Table \ref{tab:benchmark_data}).
 
 
 \begin{table}[ht]
@@ -97,12 +97,11 @@ The benchmarks reflect the operational context of the deployed system. The sched
 
 The model was evaluated across three dimensions: patient count ($P \in \{10, 20, 40\}$), number of physicians ($\{1, 2\}$), and operating room blocks ($\{2, 3\}$). For each configuration, up to three feasible time slots per patient were generated, yielding 30--111 total candidate events. To assess computational robustness, each configuration was solved 20 times with different random seeds for incoming patient characteristics while maintaining the baseline schedule structure; all reported metrics (events, average options per patient, runtime) represent means across these 20 replications (Table \ref{tab:benchmark_data}).
 
-Key findings: (1) For operational scales ($P \le 20$), mean solution times remain below 4 seconds across all configurations, enabling real-time consultation-integrated workflow (Figure \ref{fig:time_uses}). (2) For larger instances ($P=40$) reaching the 600-second timeout, solutions remain feasible with mean optimality gaps below 15\% and sufficient option generation (2.50--2.77 options per patient; Figure \ref{fig:events_per_patient}). These batch scenarios are infrequent in practice due to the continuous-flow model; 600 seconds is acceptable for offline processing. (3) The 20-run replication design demonstrates computational stability: for $P \le 20$, optimal solutions are consistently achieved within seconds.
+Key findings: (1) For operational scales ($P \le 20$), mean solution times remain below 4 seconds across all configurations, enabling real-time consultation-integrated workflow (Figure \ref{fig:time_uses}). (2) For larger instances ($P=40$) reaching the 600-second timeout, solutions remain feasible with mean optimality gaps below 15\% and sufficient option generation (2.50--2.77 options per patient; Figure \ref{fig:events_per_patient}). These batch scenarios are infrequent in practice due to the continuous-flow model; 600 seconds is acceptable for offline processing. (3) The 20-run replication design confirms computational stability: for $P \le 20$, optimal solutions are consistently achieved within seconds.
 
 
-The framework's second phase guides patient review and slot confirmation. The MILP generates up to three feasible options per patient; using availability score $\sigma_p$, the system identifies flexible patients for early confirmation, then recomputes remaining options. This iterative approach ensures flexible patients consume non-critical options first, preserving choice for constrained patients. Patients review validated options ranked by clinical desirability, enabling shared decision-making that considers personal and occupational constraints.
+The flexibility-first heuristic (Algorithm \ref{alg:patient_ordering}) then guides sequential patient confirmation, preserving options for constrained patients.
 
-The computational performance aligns with the system's consultation-driven design. Instances with $P \le 20$ solve optimally in real-time; larger instances ($P = 40$) reach time limits but produce solutions with 15\% optimality gap for infrequent batch scenarios. The limited event pool (3 options per patient) maintains tractability while preserving patient choice.
 \begin{figure}[ht]
     \centering
     \begingroup

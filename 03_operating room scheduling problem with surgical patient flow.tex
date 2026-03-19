@@ -71,20 +71,7 @@ $u_{d,b,h,k}$ & $\{0,1\}$ &
 \end{table*}
 
 \subsection{Operational Context}
-The scheduling operates within a clinical workflow that differs from traditional batch scheduling approaches. In practice, patients are not accumulated and scheduled in large batches at fixed weekly intervals. Instead, the system processes patients incrementally as they complete their consultation appointments, where the operating physician determines the surgical need and assigns the patient to their surgical schedule.
-
-In this incremental process:
-\begin{itemize}
-    \item Patients enter the scheduling system immediately after consultation.
-    \item The optimization model runs for each new patient (or small groups of patients from a single consultation day).
-    \item The system generates up to three optimized feasible time slots tailored to each patient's constraints.
-    \item Patients review these options and confirm their preferred surgery date.
-    \item Once confirmed, the assignment becomes fixed in the schedule for subsequent optimization runs.
-\end{itemize}
-
-Consequently, each physician maintains a wait list of patients pending surgical scheduling, which typically contains between 5 and 15 patients at any given time. This wait-list represents patients who have been consulted and are awaiting either (a) the generation of feasible time slots, (b) patient confirmation of their selected slot, or (c) resolution of specific medical or administrative prerequisites. 
-
-Wait-lists remain small (5-15 patients, maximum 20) because patients flow continuously through the system rather than accumulating into backlogs.
+Unlike batch scheduling, the system processes patients incrementally after consultation. The physician determines surgical need and adds the patient to the schedule. The optimization model then generates up to three feasible time slots per patient. Patients review these options and confirm their preferred date; confirmed assignments become fixed for subsequent runs. Each physician's wait list typically contains 5--15 patients pending slot generation, patient confirmation, or prerequisite resolution.
 
 
 \subsection{Constraints description}
@@ -96,7 +83,7 @@ We formulate the scheduling decision as an optimization problem satisfying multi
     \begin{itemize}
         \item \textbf{Priority 1:} Minimize unassigned patients ($\alpha_1$).
         \item \textbf{Priority 2:} Minimize capacity and time constraint violations, including early or late scheduling relative to the patient's stay limits ($\alpha_3$). Capacity violations ($\alpha_2$) are permitted only for urgent cases replacing elective patients.
-        \item \textbf{Priority 3:} Minimize specialty fragmentation ($\alpha_4$) and efficiently manage day usage ($\alpha_5$), which promotes operational stability and maximizes resource utilization.
+        \item \textbf{Priority 3:} Minimize specialty fragmentation ($\alpha_4$) and efficiently manage day usage ($\alpha_5$), to reduce specialty fragmentation and concentrate day usage.
     \end{itemize}
 
  
@@ -218,8 +205,7 @@ With partition interval equal to $1$ in the code, this effectively prevents mult
 
 Patients select their surgery time slots sequentially rather than simultaneously. Once a patient confirms a time slot, it becomes fixed, and subsequent optimizations will not take it into consideration for further recalculations. This reduces the possible options for patients remaining in the pool. Therefore, the order in which patients are presented for selection is critical to maximizing the feasibility of the solution and preserving the best options for all patients.
 
-This heuristic prioritizes patients with the most flexible schedules (high availability scores) based on the MILP results for early selection. Such flexible patients can choose from multiple good-quality slots. For each unscheduled patient pp
-p, an availability score $\sigma_p$ quantifies scheduling flexibility:
+This heuristic prioritizes patients with the most flexible schedules (high availability scores) based on the MILP results for early selection. These patients can choose from multiple feasible slots. For each unscheduled patient $p$, an availability score $\sigma_p$ quantifies scheduling flexibility:
 
 \begin{equation}
 \sigma_p = \sum_{s \in \mathcal{S}_p} \text{score}(s, p)
@@ -236,7 +222,7 @@ where $\mathcal{S}_p$ is the set of feasible slots and $\text{score}(s, p)$ is:
 \end{equation}
 
 % Patients with higher $\sigma_p$ are processed first. 
-Patients with higher availability scores $\sigma_p$ are prioritized in the selection sequence. After each patient confirms a selection, slot availability is updated and scores are recomputed for remaining patients. Algorithm \ref{alg:patient_ordering}
+Patients with higher availability scores $\sigma_p$ are prioritized in the selection sequence. After each patient confirms a selection, slot availability is updated and scores are recomputed for remaining patients, as detailed in Algorithm \ref{alg:patient_ordering}.
 
 \begin{algorithm}[H]
 \caption{Iterative Patient Selection and Confirmation}
