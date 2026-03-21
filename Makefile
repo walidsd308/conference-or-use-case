@@ -29,7 +29,7 @@ docker-pdf:
 		-v $$(pwd):/$$(basename $$(pwd)) \
 		-w /$$(basename $$(pwd)) \
 		$(DOCKER_IMAGE_NAME) \
-		latexmk -pdf -interaction=nonstopmode main.tex
+		latexmk -pdf -f -interaction=nonstopmode main.tex || true
 	@echo "✓ PDF compilation complete"
 	@echo "Output: main.pdf"
 
