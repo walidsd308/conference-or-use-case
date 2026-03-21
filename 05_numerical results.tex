@@ -12,7 +12,7 @@ Three OR blocks are available all working weekdays, providing $10.5$ hours of ca
 
 \subsection{Real-World Performance}
 
-The baseline (``Real Case'') schedule was produced manually by administrative staff at CHU Montpellier using conventional, non-optimized procedures. The results, summarized in Table \ref{tab:utilization} and Figure \ref{fig:utilization}, show that the model improves resource utilization while maintaining scheduling flexibility. To isolate maximum resource utilization, tests limited each patient to a single scheduled event. This step directly assessed the theoretical capacity within existing real-world resource constraints.
+The baseline (``Real Case'') schedule was produced manually by administrative staff at CHU Montpellier using conventional, non-optimized procedures. The results, summarized in Table \ref{tab:utilization} and Figure \ref{fig:utilization}, show that the model improves resource utilization without reducing scheduling flexibility. To isolate maximum resource utilization, tests limited each patient to a single scheduled event. This step directly assessed the theoretical capacity within existing real-world resource constraints.
 \begin{table}[htb]
 \centering
 \caption{Comparison of Surgical Block Time Utilization (\%): Real Case vs. Optimized Schedule over 3 Weeks}
@@ -61,7 +61,7 @@ The baseline (``Real Case'') schedule was produced manually by administrative st
 % \end{figure}
 
 \noindent
-The model redistributes patients across the planning horizon. In Weeks 1--2, utilization increased from 72--73\% to 91--95\% by condensing workload into available block time. In the third week, utilization decreased from 79\% to 39\% because most patients had already been assigned to the first two weeks, effectively freeing Week~3 capacity for future demand. In these tests, we did not include fictitious patients; the objective was to redistribute existing patients to evaluate whether utilization gains were achievable in previously completed schedules.
+The model redistributes patients across the planning horizon. In Weeks 1--2, utilization increased from 72--73\% to 91--95\% by condensing workload into available block time. In the third week, utilization decreased from 79\% to 39\% because most patients had already been assigned to the first two weeks, freeing Week~3 capacity for future demand. In these tests, we did not include fictitious patients; the objective was to redistribute existing patients to evaluate whether utilization gains were achievable in previously completed schedules.
 
 
 \subsection{Simulation Results}
@@ -97,7 +97,7 @@ Benchmark instances of 10--40 patients match realistic operational scales, given
 
 The model was evaluated across three dimensions: patient count ($P \in \{10, 20, 40\}$), number of physicians ($\{1, 2\}$), and operating room blocks ($\{2, 3\}$). For each configuration, up to three feasible time slots per patient were generated, yielding 30--111 total candidate events. To assess computational robustness, each configuration was solved 20 times with different random seeds for incoming patient characteristics while maintaining the baseline schedule structure; all reported metrics (events, average options per patient, runtime) represent means across these 20 replications (Table \ref{tab:benchmark_data}).
 
-Key findings: (1) For operational scales ($P \le 20$), mean solution times remain below 4 seconds across all configurations, enabling real-time consultation-integrated workflow (Figure \ref{fig:time_uses}). (2) For larger instances ($P=40$) reaching the 600-second timeout, solutions remain feasible with mean optimality gaps below 15\% and sufficient option generation (2.50--2.77 options per patient; Figure \ref{fig:events_per_patient}). These batch scenarios are infrequent in practice due to the continuous-flow model; 600 seconds is acceptable for offline processing. Moreover, the optimality gap affects only the ranking of proposed slots, not the feasibility of the schedule: patients still receive at least 2.50 options on average. (3) The 20-run replication design confirms computational stability: for $P \le 20$, optimal solutions are consistently achieved within seconds.
+Key findings: (1) For operational scales ($P \le 20$), mean solution times remain below 4 seconds across all configurations, compatible with real-time use during consultations (Figure \ref{fig:time_uses}). (2) For larger instances ($P=40$) reaching the 600-second timeout, solutions remain feasible with mean optimality gaps below 15\% and 2.50--2.77 options per patient (Figure \ref{fig:events_per_patient}). These batch scenarios are infrequent in practice due to the continuous-flow model; 600 seconds is acceptable for offline processing. Moreover, the optimality gap affects only the ranking of proposed slots, not the feasibility of the schedule: patients still receive at least 2.50 options on average. (3) The 20-run replication design shows stable computation times: for $P \le 20$, optimal solutions are found within seconds.
 
 
 The flexibility-first heuristic (Algorithm \ref{alg:patient_ordering}) then guides sequential patient confirmation, preserving options for constrained patients.

@@ -3,13 +3,13 @@
 This patient-centered OR scheduling framework combines operational optimization with patient choice. Implemented in the orthopedic department at CHU Montpellier (France), the system is computationally feasible and operationally useful for patient-centered surgical scheduling.
 
 
-The solution uses a MILP with hierarchical objectives to generate up to three time slot options for each patient. A flexibility-first heuristic prioritizes patients with flexible schedules based on early selection and availability scores while preserving options for those with constrained schedules. Patients actively participate in their scheduling decision by selecting their preferred slot option.
+The solution uses a MILP with hierarchical objectives to generate up to three time slot options for each patient. A flexibility-first heuristic prioritizes patients with flexible schedules based on early selection and availability scores; options for constrained patients are kept available. Patients select their preferred slot from the proposed options.
 
-Benchmark simulations across 10--40 patients, 1--2 physicians, and 2--3 operating rooms cover a range of realistic scenarios. Real-world validation (134 patients, 3 weeks) achieved 72--73\% to 91--95\% utilization increases and 36 net operations gained versus 11 in the real case. For scales $P \le 20$, solutions arrive in under 4 seconds, enabling real-time workflow. The weighted hierarchical objective balances OR capacity with shared decision-making.
+Benchmark simulations span 10--40 patients, 1--2 physicians, and 2--3 operating rooms. Real-world validation (134 patients, 3 weeks) achieved 72--73\% to 91--95\% utilization increases and 36 net operations gained versus 11 in the real case. For scales $P \le 20$, solutions arrive in under 4 seconds, which supports real-time use. The weighted hierarchical objective accounts for both OR capacity and shared decision-making.
 
 
 The framework was developed for elective orthopedic surgery, where scheduling flexibility is higher. Validation in other surgical specialties and at larger institutional scales is necessary.
 
-Future work includes modeling stochastic durations, learning patient preferences, and real-time rescheduling. Genetic algorithms could improve scalability for larger instances.
+Future work includes stochastic duration modeling, patient preference learning, and real-time rescheduling. Genetic algorithms could improve scalability for larger instances.
 
-Patient preferences can be incorporated into OR scheduling without prohibitive computational cost.
+The results show that including patient preferences in OR scheduling remains computationally tractable.
